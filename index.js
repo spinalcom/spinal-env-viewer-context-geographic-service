@@ -1,15 +1,34 @@
 var graphLib = require("spinalgraph");
 const { AbstractElement } = require("spinal-models-building-elements");
 
+const CONTEXT_TYPE = "context";
+const BUILDING_TYPE = "building";
+const FLOOR_TYPE = "floor";
+const ZONE_TYPE = "zone";
+const ROOM_TYPE = "room";
+const EQUIPMENT_TYPE = "equipment";
+
 export default class ContextGeographic {
   constructor() {}
 
-  formatRelationName(type) {
-    return "has" + type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+  getChildType(parentType) {
+    switch (parentType) {
+      case CONTEXT_TYPE:
+        return { type: BUILDING_TYPE, relation: "hasBuilding" };
+      case BUILDING_TYPE:
+        return { type: FLOOR_TYPE, relation: "hasFloor" };
+      case FLOOR_TYPE:
+        return { type: ZONE_TYPE, relation: "hasZone" };
+      case ZONE_TYPE:
+        return { type: ROOM_TYPE, relation: "hasRoom" };
+      case ROOM_TYPE:
+        return { type: EQUIPMENT_TYPE, relation: "hasBimObject" };
+      default:
+        return undefined;
+    }
   }
 
   async createContext(contextName) {
-
     var _graph = spinal.ForgeViewer.forgeFile.graph;
 
     var context = await _graph.getContext(contextName);
@@ -25,36 +44,37 @@ export default class ContextGeographic {
     return true;
   }
 
-  addAbstractElement(parentNode, childName, type) {
-    var types = ["building", "floor", "zone", "room", "equipment"];
+  addAbstractElement(context, parentNode, childName) {
+    var childType = this.getChildType(parentNode.info.type.get());
+
 
     // le nom de la relation est généré en fonction du type, c'est pourquoi je verifie si c'est valide
-    if (!types.includes(type.toLowerCase())) throw "The type is not Valid";
+    if (!childType) throw `${parentNode.info.type.get()} is not a valid type in geographical context`;
 
     var childNode = new graphLib.SpinalNode(
       childName,
-      type,
+      childType.type,
       new AbstractElement(childName)
     );
 
-    parentNode.addChild(childNode, this.formatRelationName(type), "Ref");
+    parentNode.addChildInContext(childNode, childType.relation, "Ref", context);
     return true;
   }
 
-  addBuilding(parentNode, buildingName) {
-    return this.addAbstractElement(parentNode, buildingName, "building");
+  addBuilding(context, parentNode, buildingName) {
+    return this.addAbstractElement(context, parentNode, buildingName);
   }
 
-  addFloor(parentNode, floorName) {
-    return this.addAbstractElement(parentNode, floorName, "floor");
+  addFloor(context, parentNode, floorName) {
+    return this.addAbstractElement(context, parentNode, floorName);
   }
 
-  addZone(parentNode, zoneName) {
-    return this.addAbstractElement(parentNode, zoneName, "zone");
+  addZone(context, parentNode, zoneName) {
+    return this.addAbstractElement(context, parentNode, zoneName);
   }
 
   addRoom(parentNode, roomName) {
-    return this.addAbstractElement(parentNode, roomName, "room");
+    return this.addAbstractElement(context, parentNode, roomName);
   }
 }
 
