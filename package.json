@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "doc": "jsdoc2md --files index.js > README.md"
+    "doc": "jsdoc2md --template STARTER.md --files  index.js > README.md"
   },
   "keywords": [],
   "author": "",
