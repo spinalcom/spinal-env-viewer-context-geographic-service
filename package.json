@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "doc": "jsdoc2md --files index.js > README.md"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +14,7 @@
   "dependencies": {
     "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git",
     "spinal-models-building-elements":"git+https://github.com/spinalcom/spinal-models-building-elements.git",
-    "spinal-env-viewer-plugin-bimobjectservice":"https://github.com/spinalcom/spinal-env-viewer-plugin-bimobjectservice.git"
+    "spinal-env-viewer-plugin-bimobjectservice":"https://github.com/spinalcom/spinal-env-viewer-plugin-bimobjectservice.git",
+    "jsdoc-to-markdown": "^4.0.1"
   }
 }
