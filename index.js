@@ -1,5 +1,7 @@
 var graphLib = require("spinalgraph");
 const { AbstractElement } = require("spinal-models-building-elements");
+import bimobjService from 'spinal-env-viewer-plugin-bimobjectservice';
+
 
 const CONTEXT_TYPE = "context";
 const BUILDING_TYPE = "building";
@@ -54,7 +56,7 @@ export default class ContextGeographic {
       "context",
       new AbstractElement(contextName)
     );
-    _graph.addContext(contextGeo);
+    await _graph.addContext(contextGeo);
     return true;
   }
 
@@ -92,7 +94,7 @@ export default class ContextGeographic {
   /**
    * @param  {SpinalContext} context - The Context geographic
    * @param  {SpinalNode} node - The parent Node
-   * @param  {string} buildingName
+   * @param  {string} buildingName - Building Name
    */
   addBuilding(context, node, buildingName) {
     return this.addAbstractElement(context, node, buildingName);
@@ -102,7 +104,7 @@ export default class ContextGeographic {
   /**
    * @param  {SpinalContext} context - The Context geographic
    * @param  {SpinalNode} node - The parent Node
-   * @param  {string} floorName
+   * @param  {string} floorName - the floor Name
    */
   addFloor(context, node, floorName) {
     return this.addAbstractElement(context, node, floorName);
@@ -112,7 +114,7 @@ export default class ContextGeographic {
   /**
    * @param  {SpinalContext} context - The Context geographic
    * @param  {SpinalNode} node - The parent Node
-   * @param  {string} zoneName
+   * @param  {string} zoneName - Zone name
    */
   addZone(context, node, zoneName) {
     return this.addAbstractElement(context, node, zoneName);
@@ -122,11 +124,29 @@ export default class ContextGeographic {
   /**
    * @param  {SpinalContext} context - The Context geographic
    * @param  {SpinalNode} node - The parent Node
-   * @param  {string} roomName
+   * @param  {string} roomName - Room Name
    */
   addRoom(context, node, roomName) {
     return this.addAbstractElement(context, node, roomName);
   }
+
+  /**
+   * it uses bimObject service to add all dbIds passed as parameters.
+   * the parameter dbIds can be a simple dbIds or a list of dbIds.
+   * 
+   * @param  {SpinalContext} context - The Context geographic
+   * @param  {SpinalNode} node - The parent Node
+   * @param  {Number | Array<Number>} dbIds - Can be
+   */
+  addBimElement(context, node, dbIds) {
+    if(!Array.isArray(dbIds)) dbIds = [dbIds];
+
+    dbIds.forEach(element => {
+      bimobjService.addBIMObject(context,node,element,"bimObject_" + element );
+    });
+
+  }
+
 }
 
 var contextGeographic = new ContextGeographic();

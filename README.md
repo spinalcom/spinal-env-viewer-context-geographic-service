@@ -45,6 +45,10 @@ contextGeoService.createContext(contextName);
 <dd></dd>
 <dt><a href="#addRoom">addRoom(context, node, roomName)</a></dt>
 <dd></dd>
+<dt><a href="#addBimElement">addBimElement(context, node, dbIds)</a></dt>
+<dd><p>it uses bimObject service to add all dbIds passed as parameters.
+the parameter dbIds can be a simple dbIds or a list of dbIds.</p>
+</dd>
 </dl>
 
 <a name="getChildType"></a>
@@ -91,7 +95,7 @@ This method takes as parameters a context (SpinalContext), a parent node (must b
 | --- | --- | --- |
 | context | <code>SpinalContext</code> | The Context geographic |
 | node | <code>SpinalNode</code> | The parent Node |
-| buildingName | <code>string</code> |  |
+| buildingName | <code>string</code> | Building Name |
 
 <a name="addFloor"></a>
 
@@ -102,7 +106,7 @@ This method takes as parameters a context (SpinalContext), a parent node (must b
 | --- | --- | --- |
 | context | <code>SpinalContext</code> | The Context geographic |
 | node | <code>SpinalNode</code> | The parent Node |
-| floorName | <code>string</code> |  |
+| floorName | <code>string</code> | the floor Name |
 
 <a name="addZone"></a>
 
@@ -113,7 +117,7 @@ This method takes as parameters a context (SpinalContext), a parent node (must b
 | --- | --- | --- |
 | context | <code>SpinalContext</code> | The Context geographic |
 | node | <code>SpinalNode</code> | The parent Node |
-| zoneName | <code>string</code> |  |
+| zoneName | <code>string</code> | Zone name |
 
 <a name="addRoom"></a>
 
@@ -124,5 +128,19 @@ This method takes as parameters a context (SpinalContext), a parent node (must b
 | --- | --- | --- |
 | context | <code>SpinalContext</code> | The Context geographic |
 | node | <code>SpinalNode</code> | The parent Node |
-| roomName | <code>string</code> |  |
+| roomName | <code>string</code> | Room Name |
+
+<a name="addBimElement"></a>
+
+## addBimElement(context, node, dbIds)
+it uses bimObject service to add all dbIds passed as parameters.
+the parameter dbIds can be a simple dbIds or a list of dbIds.
+
+**Kind**: global function  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| context | <code>SpinalContext</code> | The Context geographic |
+| node | <code>SpinalNode</code> | The parent Node |
+| dbIds | <code>Number</code> \| <code>Array.&lt;Number&gt;</code> | Can be |
 
