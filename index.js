@@ -11,14 +11,13 @@ const ROOM_TYPE = "geographicRoom";
 const EQUIPMENT_TYPE = "geographicEquipment";
 
 const GeographicContext = {
-
   /**
    * This method takes as parameter a type (parent type), depending on this type, it returns the type of the child and the name of the relationship
    * @param  {string} parentType - it allows to determine the type to the child
    * @returns {{name : childName, relation : relationName}}
    */
   getChildType(parentType) {
-    if (typeof parentType !== "string") throw "The parentType must be a string";
+    if (typeof parentType !== "string") throw Error("The parentType must be a string");
 
     switch (parentType) {
       case CONTEXT_TYPE:
@@ -42,7 +41,7 @@ const GeographicContext = {
    * @returns {Promise<Boolean>}
    */
   async createContext(contextName) {
-    if (typeof contextName !== "string") throw "contextName must be a string";
+    if (typeof contextName !== "string") throw Error("contextName must be a string");
 
     var _graph = spinal.ForgeViewer.forgeFile.graph;
 
@@ -72,13 +71,12 @@ const GeographicContext = {
       !(node instanceof graphLib.SpinalNode) ||
       typeof elementName !== "string"
     )
-      throw "the parameters types must be (SpinalContext, SpinalNode, string) check if its case";
+      throw Error("the parameters types must be (SpinalContext, SpinalNode, string) check if its case");
 
     var childType = GeographicContext.getChildType(node.info.type.get());
 
-    // le nom de la relation est généré en fonction du type, c'est pourquoi je verifie si c'est valide
     if (!childType)
-      throw `${node.info.type.get()} is not a valid type in geographical context`;
+      throw Error(`${node.info.type.get()} is not a valid type in geographical context`);
 
     var childNode = new graphLib.SpinalNode(
       elementName,
@@ -86,7 +84,7 @@ const GeographicContext = {
       new AbstractElement(elementName)
     );
 
-    node.addChildInContext(childNode, childType.relation, "Ref", context);
+    node.addChildInContext(childNode, childType.relation, graphLib.SPINAL_RELATION_TYPE, context);
     return true;
   },
 
@@ -132,22 +130,17 @@ const GeographicContext = {
   /**
    * it uses bimObject service to add all dbIds passed as parameters.
    * the parameter dbIds can be a simple dbIds or a list of dbIds.
-   * 
    * @param  {SpinalContext} context - The Context geographic
    * @param  {SpinalNode} node - The parent Node
    * @param  {Number | Array<Number>} dbIds - Can be
    */
   addBimElement(context, node, dbIds) {
-    if(!Array.isArray(dbIds)) dbIds = [dbIds];
+    if (!Array.isArray(dbIds)) dbIds = [dbIds];
 
     dbIds.forEach(element => {
-      bimobjService.addBIMObject(context,node,element,"bimObject_" + element );
+      bimobjService.addBIMObject(context, node, element, "bimObject_" + element);
     });
-
   }
-
 }
-
-
 
 module.exports = GeographicContext;
