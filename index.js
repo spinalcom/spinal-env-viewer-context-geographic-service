@@ -3,7 +3,7 @@ const { AbstractElement } = require("spinal-models-building-elements");
 import bimobjService from 'spinal-env-viewer-plugin-bimobjectservice';
 
 
-const CONTEXT_TYPE = "geographic";
+const CONTEXT_TYPE = "geographicContext";
 const BUILDING_TYPE = "geographicBuilding";
 const FLOOR_TYPE = "geographicFloor";
 const ZONE_TYPE = "geographicZone";
