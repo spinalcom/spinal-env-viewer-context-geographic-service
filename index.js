@@ -3,15 +3,14 @@ const { AbstractElement } = require("spinal-models-building-elements");
 import bimobjService from 'spinal-env-viewer-plugin-bimobjectservice';
 
 
-const CONTEXT_TYPE = "context";
-const BUILDING_TYPE = "building";
-const FLOOR_TYPE = "floor";
-const ZONE_TYPE = "zone";
-const ROOM_TYPE = "room";
-const EQUIPMENT_TYPE = "equipment";
+const CONTEXT_TYPE = "geographic";
+const BUILDING_TYPE = "geographicBuilding";
+const FLOOR_TYPE = "geographicFloor";
+const ZONE_TYPE = "geographicZone";
+const ROOM_TYPE = "geographicRoom";
+const EQUIPMENT_TYPE = "geographicEquipment";
 
-export default class ContextGeographic {
-  constructor() {}
+const GeographicContext = {
 
   /**
    * This method takes as parameter a type (parent type), depending on this type, it returns the type of the child and the name of the relationship
@@ -35,7 +34,7 @@ export default class ContextGeographic {
       default:
         return undefined;
     }
-  }
+  },
 
   /**
    * It Takes as parameter a context name, returns true if a context with the same name does not exist, else returns false.
@@ -53,12 +52,12 @@ export default class ContextGeographic {
 
     var contextGeo = new graphLib.SpinalContext(
       contextName,
-      "context",
+      CONTEXT_TYPE,
       new AbstractElement(contextName)
     );
     await _graph.addContext(contextGeo);
     return true;
-  }
+  },
 
   /**
    * This method takes as parameters a context (SpinalContext), a parent node (must be a SpinalNode) and a string representing the abstract element type;
@@ -75,7 +74,7 @@ export default class ContextGeographic {
     )
       throw "the parameters types must be (SpinalContext, SpinalNode, string) check if its case";
 
-    var childType = this.getChildType(node.info.type.get());
+    var childType = GeographicContext.getChildType(node.info.type.get());
 
     // le nom de la relation est généré en fonction du type, c'est pourquoi je verifie si c'est valide
     if (!childType)
@@ -89,7 +88,7 @@ export default class ContextGeographic {
 
     node.addChildInContext(childNode, childType.relation, "Ref", context);
     return true;
-  }
+  },
 
   /**
    * @param  {SpinalContext} context - The Context geographic
@@ -97,8 +96,8 @@ export default class ContextGeographic {
    * @param  {string} buildingName - Building Name
    */
   addBuilding(context, node, buildingName) {
-    return this.addAbstractElement(context, node, buildingName);
-  }
+    return GeographicContext.addAbstractElement(context, node, buildingName);
+  },
 
 
   /**
@@ -107,8 +106,8 @@ export default class ContextGeographic {
    * @param  {string} floorName - the floor Name
    */
   addFloor(context, node, floorName) {
-    return this.addAbstractElement(context, node, floorName);
-  }
+    return GeographicContext.addAbstractElement(context, node, floorName);
+  },
 
 
   /**
@@ -117,8 +116,8 @@ export default class ContextGeographic {
    * @param  {string} zoneName - Zone name
    */
   addZone(context, node, zoneName) {
-    return this.addAbstractElement(context, node, zoneName);
-  }
+    return GeographicContext.addAbstractElement(context, node, zoneName);
+  },
 
 
   /**
@@ -127,8 +126,8 @@ export default class ContextGeographic {
    * @param  {string} roomName - Room Name
    */
   addRoom(context, node, roomName) {
-    return this.addAbstractElement(context, node, roomName);
-  }
+    return GeographicContext.addAbstractElement(context, node, roomName);
+  },
 
   /**
    * it uses bimObject service to add all dbIds passed as parameters.
@@ -149,6 +148,6 @@ export default class ContextGeographic {
 
 }
 
-var contextGeographic = new ContextGeographic();
 
-module.exports = contextGeographic;
+
+module.exports = GeographicContext;
