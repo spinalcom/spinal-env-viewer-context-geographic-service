@@ -6,6 +6,18 @@ import * as constants from "./constants";
 
 const GeographicContext = {
   constants: constants,
+
+  /**
+   * Returns the child type of the type given as parameter.
+   * @param {string} parentType
+   * @return {string} Child type
+   */
+  getChildType(parentType) {
+    let parentTypeIndex = constants.GEOGRAPHIC_TYPES_ORDER.indexOf(parentType);
+
+    return constants.GEOGRAPHIC_TYPES_ORDER[parentTypeIndex + 1];
+  },
+
   /**
    * It Takes as parameter a context name, returns true if a context with the same name does not exist, else returns false.
    * @param {string} contextName
@@ -50,21 +62,23 @@ const GeographicContext = {
       );
     }
 
-    var childType = constants.MAP_TYPE_RELATION.get(node.info.type.get());
+    const parentType = node.getType().get();
+    const childType = this.getChildType(parentType);
+    const childRelation = constants.MAP_TYPE_RELATION.get(childType);
 
     if (!childType) {
       throw Error(
-        `${node.info.type.get()} is not a valid type in geographical context`
+        `${parentType} is not a valid type in geographical context`
       );
     }
 
     var childNode = new graphLib.SpinalNode(
       elementName,
-      childType.type,
+      childType,
       new AbstractElement(elementName)
     );
 
-    node.addChildInContext(childNode, childType.relation, graphLib.SPINAL_RELATION_TYPE,
+    node.addChildInContext(childNode, childRelation, graphLib.SPINAL_RELATION_TYPE,
       context);
     return true;
   },
