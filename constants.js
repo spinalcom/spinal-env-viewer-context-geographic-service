@@ -1,0 +1,63 @@
+const CONTEXT_TYPE = "geographicContext";
+
+const BUILDING_TYPE = "geographicBuilding";
+const FLOOR_TYPE = "geographicFloor";
+const ZONE_TYPE = "geographicZone";
+const ROOM_TYPE = "geographicRoom";
+
+const GEOGRAPHIC_TYPES = Object.freeze([
+  BUILDING_TYPE,
+  FLOOR_TYPE,
+  ZONE_TYPE,
+  ROOM_TYPE
+]);
+
+const EQUIPMENT_TYPE = "geographicEquipment";
+
+const BUILDING_RELATION = "hasGeographicBuilding";
+const FLOOR_RELATION = "hasGeographicFloor";
+const ZONE_RELATION = "hasGeographicZone";
+const ROOM_RELATION = "hasGeographicRoom";
+
+const GEOGRAPHIC_RELATIONS = Object.freeze([
+  BUILDING_RELATION,
+  FLOOR_RELATION,
+  ZONE_RELATION,
+  ROOM_RELATION
+]);
+
+const EQUIPMENT_RELATION = "hasGeographicEquipment";
+
+const MAP_TYPE_RELATION = Object.freeze(new Map([
+  [BUILDING_TYPE, BUILDING_RELATION],
+  [FLOOR_TYPE, FLOOR_RELATION],
+  [ZONE_TYPE, ZONE_RELATION],
+  [ROOM_TYPE, ROOM_RELATION],
+  [EQUIPMENT_TYPE, EQUIPMENT_RELATION]
+]));
+
+const MAP_RELATION_TYPE = Object.freeze(new Map([
+  [BUILDING_RELATION, BUILDING_TYPE],
+  [FLOOR_RELATION, FLOOR_TYPE],
+  [ZONE_RELATION, ZONE_TYPE],
+  [ROOM_RELATION, ROOM_TYPE],
+  [EQUIPMENT_RELATION, EQUIPMENT_TYPE]
+]));
+
+export {
+  CONTEXT_TYPE,
+  BUILDING_TYPE,
+  FLOOR_TYPE,
+  ZONE_TYPE,
+  ROOM_TYPE,
+  GEOGRAPHIC_TYPES,
+  EQUIPMENT_TYPE,
+  BUILDING_RELATION,
+  FLOOR_RELATION,
+  ZONE_RELATION,
+  ROOM_RELATION,
+  GEOGRAPHIC_RELATIONS,
+  EQUIPMENT_RELATION,
+  MAP_TYPE_RELATION,
+  MAP_RELATION_TYPE
+};

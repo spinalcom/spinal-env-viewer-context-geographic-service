@@ -1,47 +1,21 @@
-var graphLib = require("spinalgraph");
-const { AbstractElement } = require("spinal-models-building-elements");
+import * as graphLib from "spinalgraph";
+import {AbstractElement} from "spinal-models-building-elements";
 import bimobjService from 'spinal-env-viewer-plugin-bimobjectservice';
 
-
-const CONTEXT_TYPE = "geographicContext";
-const BUILDING_TYPE = "geographicBuilding";
-const FLOOR_TYPE = "geographicFloor";
-const ZONE_TYPE = "geographicZone";
-const ROOM_TYPE = "geographicRoom";
-const EQUIPMENT_TYPE = "geographicEquipment";
+import * as constants from "./constants";
 
 const GeographicContext = {
-  /**
-   * This method takes as parameter a type (parent type), depending on this type, it returns the type of the child and the name of the relationship
-   * @param  {string} parentType - it allows to determine the type to the child
-   * @returns {{name : childName, relation : relationName}}
-   */
-  getChildType(parentType) {
-    if (typeof parentType !== "string") throw Error("The parentType must be a string");
-
-    switch (parentType) {
-      case CONTEXT_TYPE:
-        return { type: BUILDING_TYPE, relation: "hasBuilding" };
-      case BUILDING_TYPE:
-        return { type: FLOOR_TYPE, relation: "hasFloor" };
-      case FLOOR_TYPE:
-        return { type: ZONE_TYPE, relation: "hasZone" };
-      case ZONE_TYPE:
-        return { type: ROOM_TYPE, relation: "hasRoom" };
-      case ROOM_TYPE:
-        return { type: EQUIPMENT_TYPE, relation: "hasBimObject" };
-      default:
-        return undefined;
-    }
-  },
-
+  constants: constants,
   /**
    * It Takes as parameter a context name, returns true if a context with the same name does not exist, else returns false.
-   * @param  {string} contextName
+   * @param {string} contextName
    * @returns {Promise<Boolean>}
    */
   async createContext(contextName) {
-    if (typeof contextName !== "string") throw Error("contextName must be a string");
+    if (typeof contextName !== "string") {
+      throw Error(
+        "contextName must be a string");
+    }
 
     var _graph = spinal.ForgeViewer.forgeFile.graph;
 
@@ -51,7 +25,7 @@ const GeographicContext = {
 
     var contextGeo = new graphLib.SpinalContext(
       contextName,
-      CONTEXT_TYPE,
+      constants.CONTEXT_TYPE,
       new AbstractElement(contextName)
     );
     await _graph.addContext(contextGeo);
@@ -60,9 +34,9 @@ const GeographicContext = {
 
   /**
    * This method takes as parameters a context (SpinalContext), a parent node (must be a SpinalNode) and a string representing the abstract element type;
-   * @param  {SpinalContext} context - The Context geographic
-   * @param  {SpinalNode} node - The parent Node
-   * @param  {string} elementName - The AbstactElement Name
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} elementName - The AbstactElement Name
    * @returns {Boolean}
    */
   addAbstractElement(context, node, elementName) {
@@ -70,13 +44,19 @@ const GeographicContext = {
       !(context instanceof graphLib.SpinalContext) ||
       !(node instanceof graphLib.SpinalNode) ||
       typeof elementName !== "string"
-    )
-      throw Error("the parameters types must be (SpinalContext, SpinalNode, string) check if its case");
+    ) {
+      throw Error(
+        "the parameters types must be (SpinalContext, SpinalNode, string) check if its case"
+      );
+    }
 
-    var childType = GeographicContext.getChildType(node.info.type.get());
+    var childType = constants.MAP_TYPE_RELATION.get(node.info.type.get());
 
-    if (!childType)
-      throw Error(`${node.info.type.get()} is not a valid type in geographical context`);
+    if (!childType) {
+      throw Error(
+        `${node.info.type.get()} is not a valid type in geographical context`
+      );
+    }
 
     var childNode = new graphLib.SpinalNode(
       elementName,
@@ -84,14 +64,15 @@ const GeographicContext = {
       new AbstractElement(elementName)
     );
 
-    node.addChildInContext(childNode, childType.relation, graphLib.SPINAL_RELATION_TYPE, context);
+    node.addChildInContext(childNode, childType.relation, graphLib.SPINAL_RELATION_TYPE,
+      context);
     return true;
   },
 
   /**
-   * @param  {SpinalContext} context - The Context geographic
-   * @param  {SpinalNode} node - The parent Node
-   * @param  {string} buildingName - Building Name
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} buildingName - Building Name
    */
   addBuilding(context, node, buildingName) {
     return GeographicContext.addAbstractElement(context, node, buildingName);
@@ -99,9 +80,9 @@ const GeographicContext = {
 
 
   /**
-   * @param  {SpinalContext} context - The Context geographic
-   * @param  {SpinalNode} node - The parent Node
-   * @param  {string} floorName - the floor Name
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} floorName - the floor Name
    */
   addFloor(context, node, floorName) {
     return GeographicContext.addAbstractElement(context, node, floorName);
@@ -109,9 +90,9 @@ const GeographicContext = {
 
 
   /**
-   * @param  {SpinalContext} context - The Context geographic
-   * @param  {SpinalNode} node - The parent Node
-   * @param  {string} zoneName - Zone name
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} zoneName - Zone name
    */
   addZone(context, node, zoneName) {
     return GeographicContext.addAbstractElement(context, node, zoneName);
@@ -119,9 +100,9 @@ const GeographicContext = {
 
 
   /**
-   * @param  {SpinalContext} context - The Context geographic
-   * @param  {SpinalNode} node - The parent Node
-   * @param  {string} roomName - Room Name
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} roomName - Room Name
    */
   addRoom(context, node, roomName) {
     return GeographicContext.addAbstractElement(context, node, roomName);
@@ -130,17 +111,18 @@ const GeographicContext = {
   /**
    * it uses bimObject service to add all dbIds passed as parameters.
    * the parameter dbIds can be a simple dbIds or a list of dbIds.
-   * @param  {SpinalContext} context - The Context geographic
-   * @param  {SpinalNode} node - The parent Node
-   * @param  {Number | Array<Number>} dbIds - Can be
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {Number | Array<Number>} dbIds - Can be
    */
   addBimElement(context, node, dbIds) {
     if (!Array.isArray(dbIds)) dbIds = [dbIds];
 
     dbIds.forEach(element => {
-      bimobjService.addBIMObject(context, node, element, "bimObject_" + element);
+      bimobjService.addBIMObject(context, node, element, "bimObject_" +
+        element);
     });
   }
-}
+};
 
-module.exports = GeographicContext;
+export default GeographicContext;
