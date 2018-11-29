@@ -14,7 +14,6 @@
   "dependencies": {
      "spinalgraph": "git+https://github.com/spinalcom/spinal-model-graph.git#v01",
     "spinal-models-building-elements":"git+https://github.com/spinalcom/spinal-models-building-elements.git",
-    "spinal-env-viewer-plugin-bimobjectservice":"https://github.com/spinalcom/spinal-env-viewer-plugin-bimobjectservice.git",
-    "jsdoc-to-markdown": "^4.0.1"
+    "spinal-env-viewer-plugin-bimobjectservice":"https://github.com/spinalcom/spinal-env-viewer-plugin-bimobjectservice.git"
   }
 }

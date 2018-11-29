@@ -1,9 +1,18 @@
 const CONTEXT_TYPE = "geographicContext";
-
 const BUILDING_TYPE = "geographicBuilding";
 const FLOOR_TYPE = "geographicFloor";
 const ZONE_TYPE = "geographicZone";
 const ROOM_TYPE = "geographicRoom";
+const EQUIPMENT_TYPE = "geographicEquipment";
+
+
+//relations
+const BUILDING_RELATION = "hasGeographicBuilding";
+const FLOOR_RELATION = "hasGeographicFloor";
+const ZONE_RELATION = "hasGeographicZone";
+const ROOM_RELATION = "hasGeographicRoom";
+const EQUIPMENT_RELATION = "hasGeographicEquipment";
+
 
 const GEOGRAPHIC_TYPES = Object.freeze([
   BUILDING_TYPE,
@@ -12,7 +21,6 @@ const GEOGRAPHIC_TYPES = Object.freeze([
   ROOM_TYPE
 ]);
 
-const EQUIPMENT_TYPE = "geographicEquipment";
 
 const GEOGRAPHIC_TYPES_ORDER = Object.freeze([
   CONTEXT_TYPE,
@@ -23,10 +31,6 @@ const GEOGRAPHIC_TYPES_ORDER = Object.freeze([
   EQUIPMENT_TYPE
 ]);
 
-const BUILDING_RELATION = "hasGeographicBuilding";
-const FLOOR_RELATION = "hasGeographicFloor";
-const ZONE_RELATION = "hasGeographicZone";
-const ROOM_RELATION = "hasGeographicRoom";
 
 const GEOGRAPHIC_RELATIONS = Object.freeze([
   BUILDING_RELATION,
@@ -34,8 +38,6 @@ const GEOGRAPHIC_RELATIONS = Object.freeze([
   ZONE_RELATION,
   ROOM_RELATION
 ]);
-
-const EQUIPMENT_RELATION = "hasGeographicEquipment";
 
 const GEOGRAPHIC_RELATIONS_ORDER = Object.freeze([
   BUILDING_RELATION,
