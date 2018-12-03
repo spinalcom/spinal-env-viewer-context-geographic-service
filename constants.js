@@ -3,7 +3,7 @@ const BUILDING_TYPE = "geographicBuilding";
 const FLOOR_TYPE = "geographicFloor";
 const ZONE_TYPE = "geographicZone";
 const ROOM_TYPE = "geographicRoom";
-const EQUIPMENT_TYPE = "geographicEquipment";
+const EQUIPMENT_TYPE = "BIMObject";
 
 
 //relations
@@ -11,7 +11,7 @@ const BUILDING_RELATION = "hasGeographicBuilding";
 const FLOOR_RELATION = "hasGeographicFloor";
 const ZONE_RELATION = "hasGeographicZone";
 const ROOM_RELATION = "hasGeographicRoom";
-const EQUIPMENT_RELATION = "hasGeographicEquipment";
+const EQUIPMENT_RELATION = "hasBIMObject";
 
 
 const GEOGRAPHIC_TYPES = Object.freeze([
