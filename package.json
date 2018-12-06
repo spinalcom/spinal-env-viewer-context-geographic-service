@@ -12,8 +12,10 @@
   "license": "ISC",
   
   "dependencies": {
-     "spinalgraph": "git+https://github.com/spinalcom/spinal-model-graph.git#v01",
-    "spinal-models-building-elements":"git+https://github.com/spinalcom/spinal-models-building-elements.git",
-    "spinal-env-viewer-plugin-bimobjectservice":"https://github.com/spinalcom/spinal-env-viewer-plugin-bimobjectservice.git"
+
+    "spinal-env-viewer-graph-service": "git+https://github.com/spinalcom/Spinal-Graph-Service.git",
+    "spinal-env-viewer-plugin-bimobjectservice": "git+https://github.com/spinalcom/spinal-env-viewer-plugin-bimobjectservice#develop",
+    "spinal-models-building-elements": "git+https://github.com/spinalcom/spinal-models-building-elements.git"
+
   }
 }
