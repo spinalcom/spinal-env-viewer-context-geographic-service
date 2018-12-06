@@ -1,5 +1,5 @@
-import * as graphLib from "spinalgraph";
-import {AbstractElement} from "spinal-models-building-elements";
+import { SpinalGraphService } from "spinal-env-viewer-graph-service";
+import { AbstractElement } from "spinal-models-building-elements";
 import bimobjService from 'spinal-env-viewer-plugin-bimobjectservice';
 
 import * as constants from "./constants";
@@ -12,8 +12,8 @@ const GeographicContext = {
    * @param {string} parentType
    * @return {string} Child type
    */
-  getChildType(parentType) {
-    let parentTypeIndex = constants.GEOGRAPHIC_TYPES_ORDER.indexOf(parentType);
+  getChildType( parentType ) {
+    let parentTypeIndex = constants.GEOGRAPHIC_TYPES_ORDER.indexOf( parentType );
 
     return constants.GEOGRAPHIC_TYPES_ORDER[parentTypeIndex + 1];
   },
@@ -23,24 +23,17 @@ const GeographicContext = {
    * @param {string} contextName
    * @returns {Promise<Boolean>}
    */
-  async createContext(contextName) {
+  async createContext( contextName ) {
     if (typeof contextName !== "string") {
       throw Error(
-        "contextName must be a string");
+        "contextName must be a string" );
     }
 
-    var _graph = spinal.ForgeViewer.forgeFile.graph;
-
-    var context = await _graph.getContext(contextName);
+    var context = await SpinalGraphService.getContext( contextName );
 
     if (typeof context !== "undefined") return false;
 
-    var contextGeo = new graphLib.SpinalContext(
-      contextName,
-      constants.CONTEXT_TYPE,
-      new AbstractElement(contextName)
-    );
-    await _graph.addContext(contextGeo);
+    SpinalGraphService.addContext( contextName, constants.CONTEXT_TYPE, new AbstractElement( contextName ) )
     return true;
   },
 
@@ -51,20 +44,11 @@ const GeographicContext = {
    * @param {string} elementName - The AbstactElement Name
    * @returns {Boolean}
    */
-  addAbstractElement(context, node, elementName) {
-    if (
-      !(context instanceof graphLib.SpinalContext) ||
-      !(node instanceof graphLib.SpinalNode) ||
-      typeof elementName !== "string"
-    ) {
-      throw Error(
-        "the parameters types must be (SpinalContext, SpinalNode, string) check if its case"
-      );
-    }
+  addAbstractElement( context, node, elementName ) {
 
-    const parentType = node.getType().get();
-    const childType = this.getChildType(parentType);
-    const childRelation = constants.MAP_TYPE_RELATION.get(childType);
+    const parentType = node.type.get();
+    const childType = this.getChildType( parentType );
+    const childRelation = constants.MAP_TYPE_RELATION.get( childType );
 
     if (!childType) {
       throw Error(
@@ -72,14 +56,11 @@ const GeographicContext = {
       );
     }
 
-    var childNode = new graphLib.SpinalNode(
-      elementName,
-      childType,
-      new AbstractElement(elementName)
-    );
+    var childNode = SpinalGraphService.createNode( { elementName, childType }, new AbstractElement( elementName ) );
 
-    node.addChildInContext(childNode, childRelation, graphLib.SPINAL_RELATION_TYPE,
-      context);
+
+    SpinalGraphService.getRealNode(node.id).addChildInContext( childNode, childRelation, 0,
+      context );
     return true;
   },
 
@@ -88,8 +69,8 @@ const GeographicContext = {
    * @param {SpinalNode} node - The parent Node
    * @param {string} buildingName - Building Name
    */
-  addBuilding(context, node, buildingName) {
-    return GeographicContext.addAbstractElement(context, node, buildingName);
+  addBuilding( context, node, buildingName ) {
+    return GeographicContext.addAbstractElement( context, node, buildingName );
   },
 
 
@@ -98,8 +79,8 @@ const GeographicContext = {
    * @param {SpinalNode} node - The parent Node
    * @param {string} floorName - the floor Name
    */
-  addFloor(context, node, floorName) {
-    return GeographicContext.addAbstractElement(context, node, floorName);
+  addFloor( context, node, floorName ) {
+    return GeographicContext.addAbstractElement( context, node, floorName );
   },
 
 
@@ -108,8 +89,8 @@ const GeographicContext = {
    * @param {SpinalNode} node - The parent Node
    * @param {string} zoneName - Zone name
    */
-  addZone(context, node, zoneName) {
-    return GeographicContext.addAbstractElement(context, node, zoneName);
+  addZone( context, node, zoneName ) {
+    return GeographicContext.addAbstractElement( context, node, zoneName );
   },
 
 
@@ -118,8 +99,8 @@ const GeographicContext = {
    * @param {SpinalNode} node - The parent Node
    * @param {string} roomName - Room Name
    */
-  addRoom(context, node, roomName) {
-    return GeographicContext.addAbstractElement(context, node, roomName);
+  addRoom( context, node, roomName ) {
+    return GeographicContext.addAbstractElement( context, node, roomName );
   },
 
   /**
@@ -129,13 +110,13 @@ const GeographicContext = {
    * @param {SpinalNode} node - The parent Node
    * @param {Number | Array<Number>} dbIds - Can be
    */
-  addBimElement(context, node, dbIds) {
-    if (!Array.isArray(dbIds)) dbIds = [dbIds];
+  addBimElement( context, node, dbIds ) {
+    if (!Array.isArray( dbIds )) dbIds = [dbIds];
 
-    dbIds.forEach(element => {
-      bimobjService.addBIMObject(context, node, element, "bimObject_" +
-        element);
-    });
+    dbIds.forEach( element => {
+      bimobjService.addBIMObject( context, node, element, "bimObject_" +
+        element );
+    } );
   }
 };
 
