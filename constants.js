@@ -1,4 +1,5 @@
 const CONTEXT_TYPE = "geographicContext";
+const SITE_TYPE = "geographicSite";
 const BUILDING_TYPE = "geographicBuilding";
 const FLOOR_TYPE = "geographicFloor";
 const ZONE_TYPE = "geographicZone";
@@ -6,7 +7,7 @@ const ROOM_TYPE = "geographicRoom";
 const EQUIPMENT_TYPE = "BIMObject";
 
 
-//relations
+const SITE_RELATION = "hasGeographicSite";
 const BUILDING_RELATION = "hasGeographicBuilding";
 const FLOOR_RELATION = "hasGeographicFloor";
 const ZONE_RELATION = "hasGeographicZone";
@@ -15,6 +16,7 @@ const EQUIPMENT_RELATION = "hasBIMObject";
 
 
 const GEOGRAPHIC_TYPES = Object.freeze([
+  SITE_TYPE,
   BUILDING_TYPE,
   FLOOR_TYPE,
   ZONE_TYPE,
@@ -24,6 +26,7 @@ const GEOGRAPHIC_TYPES = Object.freeze([
 
 const GEOGRAPHIC_TYPES_ORDER = Object.freeze([
   CONTEXT_TYPE,
+  SITE_TYPE,
   BUILDING_TYPE,
   FLOOR_TYPE,
   ZONE_TYPE,
@@ -33,6 +36,7 @@ const GEOGRAPHIC_TYPES_ORDER = Object.freeze([
 
 
 const GEOGRAPHIC_RELATIONS = Object.freeze([
+  SITE_RELATION,
   BUILDING_RELATION,
   FLOOR_RELATION,
   ZONE_RELATION,
@@ -41,6 +45,7 @@ const GEOGRAPHIC_RELATIONS = Object.freeze([
 ]);
 
 const GEOGRAPHIC_RELATIONS_ORDER = Object.freeze([
+  SITE_RELATION,
   BUILDING_RELATION,
   FLOOR_RELATION,
   ZONE_RELATION,
@@ -49,6 +54,7 @@ const GEOGRAPHIC_RELATIONS_ORDER = Object.freeze([
 ]);
 
 const MAP_TYPE_RELATION = Object.freeze(new Map([
+  [SITE_TYPE, SITE_RELATION],
   [BUILDING_TYPE, BUILDING_RELATION],
   [FLOOR_TYPE, FLOOR_RELATION],
   [ZONE_TYPE, ZONE_RELATION],
@@ -57,6 +63,7 @@ const MAP_TYPE_RELATION = Object.freeze(new Map([
 ]));
 
 const MAP_RELATION_TYPE = Object.freeze(new Map([
+  [SITE_RELATION, SITE_TYPE],
   [BUILDING_RELATION, BUILDING_TYPE],
   [FLOOR_RELATION, FLOOR_TYPE],
   [ZONE_RELATION, ZONE_TYPE],
@@ -66,6 +73,7 @@ const MAP_RELATION_TYPE = Object.freeze(new Map([
 
 export {
   CONTEXT_TYPE,
+  SITE_TYPE,
   BUILDING_TYPE,
   FLOOR_TYPE,
   ZONE_TYPE,
@@ -73,6 +81,7 @@ export {
   GEOGRAPHIC_TYPES,
   EQUIPMENT_TYPE,
   GEOGRAPHIC_TYPES_ORDER,
+  SITE_RELATION,
   BUILDING_RELATION,
   FLOOR_RELATION,
   ZONE_RELATION,
