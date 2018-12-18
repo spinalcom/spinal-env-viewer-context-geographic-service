@@ -75,7 +75,8 @@ const GeographicContext = {
       },
       new AbstractElement(elementName)
     );
-    SpinalGraphService.addChildInContext(node.id.get(), childNode, context.id.get(), childRelation, SPINAL_RELATION_TYPE);
+    SpinalGraphService.addChildInContext(node.id.get(), childNode, context.id
+      .get(), childRelation, SPINAL_RELATION_TYPE);
     return true;
   },
 
@@ -128,8 +129,13 @@ const GeographicContext = {
   addBimElement(context, node, dbIds) {
     if (!Array.isArray(dbIds)) dbIds = [dbIds];
 
+
+    // le bimObjectService
+    let c = SpinalGraphService.getRealNode(context.id.get());
+    let n = SpinalGraphService.getRealNode(node.id.get());
+
     dbIds.forEach(element => {
-      bimobjService.addBIMObject(context, node, element, "bimObject_" +
+      bimobjService.addBIMObject(c, n, element, "bimObject_" +
         element);
     });
   }
