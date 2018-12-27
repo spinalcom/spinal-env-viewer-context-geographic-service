@@ -5,6 +5,7 @@ const FLOOR_TYPE = "geographicFloor";
 const ZONE_TYPE = "geographicZone";
 const ROOM_TYPE = "geographicRoom";
 const EQUIPMENT_TYPE = "BIMObject";
+const REFERENCE_TYPE = "geographicReference";
 
 
 const SITE_RELATION = "hasGeographicSite";
@@ -13,6 +14,7 @@ const FLOOR_RELATION = "hasGeographicFloor";
 const ZONE_RELATION = "hasGeographicZone";
 const ROOM_RELATION = "hasGeographicRoom";
 const EQUIPMENT_RELATION = "hasBIMObject";
+const REFERENCE_RELATION = "hasReference";
 
 
 const GEOGRAPHIC_TYPES = Object.freeze([
@@ -90,5 +92,7 @@ export {
   EQUIPMENT_RELATION,
   GEOGRAPHIC_RELATIONS_ORDER,
   MAP_TYPE_RELATION,
-  MAP_RELATION_TYPE
+  MAP_RELATION_TYPE,
+  REFERENCE_TYPE,
+  REFERENCE_RELATION
 };
