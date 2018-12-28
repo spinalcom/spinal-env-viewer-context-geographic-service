@@ -1,0 +1,142 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _spinalEnvViewerGraphService = require("spinal-env-viewer-graph-service");
+
+var _spinalModelsBuildingElements = require("spinal-models-building-elements");
+
+var _spinalEnvViewerPluginBimobjectservice = require("spinal-env-viewer-plugin-bimobjectservice");
+
+var _spinalEnvViewerPluginBimobjectservice2 = _interopRequireDefault(_spinalEnvViewerPluginBimobjectservice);
+
+var _constants = require("./constants");
+
+var constants = _interopRequireWildcard(_constants);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const GeographicContext = {
+  constants: constants,
+
+  /**
+   * Returns the child type of the type given as parameter.
+   * @param {string} parentType
+   * @return {string} Child type
+   */
+  getChildType(parentType) {
+    let parentTypeIndex = constants.GEOGRAPHIC_TYPES_ORDER.indexOf(parentType);
+
+    if (parentTypeIndex === -1) {
+      return "";
+    }
+
+    return constants.GEOGRAPHIC_TYPES_ORDER[parentTypeIndex + 1];
+  },
+
+  /**
+   * It Takes as parameter a context name, returns true if a context with the same name does not exist, else returns false.
+   * @param {string} contextName
+   * @returns {Boolean}
+   */
+  createContext(contextName) {
+    if (typeof contextName !== "string") {
+      throw Error("contextName must be a string");
+    }
+
+    const context = _spinalEnvViewerGraphService.SpinalGraphService.getContext(contextName);
+
+    if (typeof context !== "undefined") return false;
+
+    _spinalEnvViewerGraphService.SpinalGraphService.addContext(contextName, constants.CONTEXT_TYPE, new _spinalModelsBuildingElements.AbstractElement(contextName));
+
+    return true;
+  },
+
+  /**
+   * This method takes as parameters a context (SpinalContext), a parent node (must be a SpinalNode) and a string representing the abstract element type;
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} elementName - The AbstactElement Name
+   * @returns {Boolean}
+   */
+  addAbstractElement(context, node, elementName) {
+    const parentType = node.type.get();
+    const childType = this.getChildType(parentType);
+
+    if (!childType) {
+      throw Error(`${parentType} is not a valid type in geographical context`);
+    }
+
+    const childRelation = constants.MAP_TYPE_RELATION.get(childType);
+
+    const childNode = _spinalEnvViewerGraphService.SpinalGraphService.createNode({
+      name: elementName,
+      type: childType
+    }, new _spinalModelsBuildingElements.AbstractElement(elementName));
+    _spinalEnvViewerGraphService.SpinalGraphService.addChildInContext(node.id.get(), childNode, context.id.get(), childRelation, _spinalEnvViewerGraphService.SPINAL_RELATION_TYPE);
+    return true;
+  },
+
+  /**
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} buildingName - Building Name
+   */
+  addBuilding(context, node, buildingName) {
+    return GeographicContext.addAbstractElement(context, node, buildingName);
+  },
+
+  /**
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} floorName - the floor Name
+   */
+  addFloor(context, node, floorName) {
+    return GeographicContext.addAbstractElement(context, node, floorName);
+  },
+
+  /**
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} zoneName - Zone name
+   */
+  addZone(context, node, zoneName) {
+    return GeographicContext.addAbstractElement(context, node, zoneName);
+  },
+
+  /**
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {string} roomName - Room Name
+   */
+  addRoom(context, node, roomName) {
+    return GeographicContext.addAbstractElement(context, node, roomName);
+  },
+
+  /**
+   * it uses bimObject service to add all dbIds passed as parameters.
+   * the parameter dbIds can be a simple dbIds or a list of dbIds.
+   * @param {SpinalContext} context - The Context geographic
+   * @param {SpinalNode} node - The parent Node
+   * @param {Number | Array<Number>} dbIds - Can be
+   */
+  addBimElement(context, node, dbIds) {
+    if (!Array.isArray(dbIds)) dbIds = [dbIds];
+
+    // le bimObjectService
+    let c = _spinalEnvViewerGraphService.SpinalGraphService.getRealNode(context.id.get());
+    let n = _spinalEnvViewerGraphService.SpinalGraphService.getRealNode(node.id.get());
+
+    dbIds.forEach(element => {
+      _spinalEnvViewerPluginBimobjectservice2.default.addBIMObject(c, n, element, "bimObject_" + element);
+    });
+  }
+};
+
+exports.default = GeographicContext;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uL3NyYy9pbmRleC5qcyJdLCJuYW1lcyI6WyJjb25zdGFudHMiLCJHZW9ncmFwaGljQ29udGV4dCIsImdldENoaWxkVHlwZSIsInBhcmVudFR5cGUiLCJwYXJlbnRUeXBlSW5kZXgiLCJHRU9HUkFQSElDX1RZUEVTX09SREVSIiwiaW5kZXhPZiIsImNyZWF0ZUNvbnRleHQiLCJjb250ZXh0TmFtZSIsIkVycm9yIiwiY29udGV4dCIsIlNwaW5hbEdyYXBoU2VydmljZSIsImdldENvbnRleHQiLCJhZGRDb250ZXh0IiwiQ09OVEVYVF9UWVBFIiwiQWJzdHJhY3RFbGVtZW50IiwiYWRkQWJzdHJhY3RFbGVtZW50Iiwibm9kZSIsImVsZW1lbnROYW1lIiwidHlwZSIsImdldCIsImNoaWxkVHlwZSIsImNoaWxkUmVsYXRpb24iLCJNQVBfVFlQRV9SRUxBVElPTiIsImNoaWxkTm9kZSIsImNyZWF0ZU5vZGUiLCJuYW1lIiwiYWRkQ2hpbGRJbkNvbnRleHQiLCJpZCIsIlNQSU5BTF9SRUxBVElPTl9UWVBFIiwiYWRkQnVpbGRpbmciLCJidWlsZGluZ05hbWUiLCJhZGRGbG9vciIsImZsb29yTmFtZSIsImFkZFpvbmUiLCJ6b25lTmFtZSIsImFkZFJvb20iLCJyb29tTmFtZSIsImFkZEJpbUVsZW1lbnQiLCJkYklkcyIsIkFycmF5IiwiaXNBcnJheSIsImMiLCJnZXRSZWFsTm9kZSIsIm4iLCJmb3JFYWNoIiwiZWxlbWVudCIsImJpbW9ialNlcnZpY2UiLCJhZGRCSU1PYmplY3QiXSwibWFwcGluZ3MiOiI7Ozs7OztBQUFBOztBQUlBOztBQUdBOzs7O0FBRUE7O0lBQVlBLFM7Ozs7OztBQUVaLE1BQU1DLG9CQUFvQjtBQUN4QkQsYUFBV0EsU0FEYTs7QUFHeEI7Ozs7O0FBS0FFLGVBQWFDLFVBQWIsRUFBeUI7QUFDdkIsUUFBSUMsa0JBQWtCSixVQUFVSyxzQkFBVixDQUFpQ0MsT0FBakMsQ0FBeUNILFVBQXpDLENBQXRCOztBQUVBLFFBQUlDLG9CQUFvQixDQUFD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WCxFQUEvQixDQUFSO0FBQ0EsUUFBSXdCLElBQUlqQyxnREFBbUJnQyxXQUFuQixDQUErQjFCLEtBQUtXLEVBQUwsQ0FBUVIsR0FBUixFQUEvQixDQUFSOztBQUVBbUIsVUFBTU0sT0FBTixDQUFjQyxXQUFXO0FBQ3ZCQyxzREFBY0MsWUFBZCxDQUEyQk4sQ0FBM0IsRUFBOEJFLENBQTlCLEVBQWlDRSxPQUFqQyxFQUEwQyxlQUN4Q0EsT0FERjtBQUVELEtBSEQ7QUFJRDtBQWpJdUIsQ0FBMUI7O2tCQW9JZTdDLGlCIiwiZmlsZSI6ImluZGV4LmpzIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtcbiAgU1BJTkFMX1JFTEFUSU9OX1RZUEUsXG4gIFNwaW5hbEdyYXBoU2VydmljZVxufSBmcm9tIFwic3BpbmFsLWVudi12aWV3ZXItZ3JhcGgtc2VydmljZVwiO1xuaW1wb3J0IHtcbiAgQWJzdHJhY3RFbGVtZW50XG59IGZyb20gXCJzcGluYWwtbW9kZWxzLWJ1aWxkaW5nLWVsZW1lbnRzXCI7XG5pbXBvcnQgYmltb2JqU2VydmljZSBmcm9tICdzcGluYWwtZW52LXZpZXdlci1wbHVnaW4tYmltb2JqZWN0c2VydmljZSc7XG5cbmltcG9ydCAqIGFzIGNvbnN0YW50cyBmcm9tIFwiLi9jb25zdGFudHNcIjtcblxuY29uc3QgR2VvZ3JhcGhpY0NvbnRleHQgPSB7XG4gIGNvbnN0YW50czogY29uc3RhbnRzLFxuXG4gIC8qKlxuICAgKiBSZXR1cm5zIHRoZSBjaGlsZCB0eXBlIG9mIHRoZSB0eXBlIGdpdmVuIGFzIHBhcmFtZXRlci5cbiAgICogQHBhcmFtIHtzdHJpbmd9IHBhcmVudFR5cGVcbiAgICogQHJldHVybiB7c3RyaW5nfSBDaGlsZCB0eXBlXG4gICAqL1xuICBnZXRDaGlsZFR5cGUocGFyZW50VHlwZSkge1xuICAgIGxldCBwYXJlbnRUeXBlSW5kZXggPSBjb25zdGFudHMuR0VPR1JBUEhJQ19UWVBFU19PUkRFUi5pbmRleE9mKHBhcmVudFR5cGUpO1xuXG4gICAgaWYgKHBhcmVudFR5cGVJbmRleCA9PT0gLTEpIHtcbiAgICAgIHJldHVybiBcIlwiO1xuICAgIH1cblxuICAgIHJldHVybiBjb25zdGFudHMuR0VPR1JBUEhJQ19UWVBFU19PUkRFUltwYXJlbnRUeXBlSW5kZXggKyAxXTtcbiAgfSxcblxuICAvKipcbiAgICogSXQgVGFrZXMgYXMgcGFyYW1ldGVyIGEgY29udGV4dCBuYW1lLCByZXR1cm5zIHRydWUgaWYgYSBjb250ZXh0IHdpdGggdGhlIHNhbWUgbmFtZSBkb2VzIG5vdCBleGlzdCwgZWxzZSByZXR1cm5zIGZhbHNlLlxuICAgKiBAcGFyYW0ge3N0cmluZ30gY29udGV4dE5hbWVcbiAgICogQHJldHVybnMge0Jvb2xlYW59XG4gICAqL1xuICBjcmVhdGVDb250ZXh0KGNvbnRleHROYW1lKSB7XG4gICAgaWYgKHR5cGVvZiBjb250ZXh0TmFtZSAhPT0gXCJzdHJpbmdcIikge1xuICAgICAgdGhyb3cgRXJyb3IoXG4gICAgICAgIFwiY29udGV4dE5hbWUgbXVzdCBiZSBhIHN0cmluZ1wiKTtcbiAgICB9XG5cbiAgICBjb25zdCBjb250ZXh0ID0gU3BpbmFsR3JhcGhTZXJ2aWNlLmdldENvbnRleHQoY29udGV4dE5hbWUpO1xuXG4gICAgaWYgKHR5cGVvZiBjb250ZXh0ICE9PSBcInVuZGVmaW5lZFwiKSByZXR1cm4gZmFsc2U7XG5cblxuICAgIFNwaW5hbEdyYXBoU2VydmljZS5hZGRDb250ZXh0KGNvbnRleHROYW1lLFxuICAgICAgY29uc3RhbnRzLkNPTlRFWFRfVFlQRSxcbiAgICAgIG5ldyBBYnN0cmFjdEVsZW1lbnQoY29udGV4dE5hbWUpKTtcblxuICAgIHJldHVybiB0cnVlO1xuICB9LFxuXG4gIC8qKlxuICAgKiBUaGlzIG1ldGhvZCB0YWtlcyBhcyBwYXJhbWV0ZXJzIGEgY29udGV4dCAoU3BpbmFsQ29udGV4dCksIGEgcGFyZW50IG5vZGUgKG11c3QgYmUgYSBTcGluYWxOb2RlKSBhbmQgYSBzdHJpbmcgcmVwcmVzZW50aW5nIHRoZSBhYnN0cmFjdCBlbGVtZW50IHR5cGU7XG4gICAqIEBwYXJhbSB7U3BpbmFsQ29udGV4dH0gY29udGV4dCAtIFRoZSBDb250ZXh0IGdlb2dyYXBoaWNcbiAgICogQHBhcmFtIHtTcGluYWxOb2RlfSBub2RlIC0gVGhlIHBhcmVudCBOb2RlXG4gICAqIEBwYXJhbSB7c3RyaW5nfSBlbGVtZW50TmFtZSAtIFRoZSBBYnN0YWN0RWxlbWVudCBOYW1lXG4gICAqIEByZXR1cm5zIHtCb29sZWFufVxuICAgKi9cbiAgYWRkQWJzdHJhY3RFbGVtZW50KGNvbnRleHQsIG5vZGUsIGVsZW1lbnROYW1lKSB7XG4gICAgY29uc3QgcGFyZW50VHlwZSA9IG5vZGUudHlwZS5nZXQoKTtcbiAgICBjb25zdCBjaGlsZFR5cGUgPSB0aGlzLmdldENoaWxkVHlwZShwYXJlbnRUeXBlKTtcblxuICAgIGlmICghY2hpbGRUeXBlKSB7XG4gICAgICB0aHJvdyBFcnJvcihcbiAgICAgICAgYCR7cGFyZW50VHlwZX0gaXMgbm90IGEgdmFsaWQgdHlwZSBpbiBnZW9ncmFwaGljYWwgY29udGV4dGBcbiAgICAgICk7XG4gICAgfVxuXG4gICAgY29uc3QgY2hpbGRSZWxhdGlvbiA9IGNvbnN0YW50cy5NQVBfVFlQRV9SRUxBVElPTi5nZXQoY2hpbGRUeXBlKTtcblxuICAgIGNvbnN0IGNoaWxkTm9kZSA9IFNwaW5hbEdyYXBoU2VydmljZS5jcmVhdGVOb2RlKHtcbiAgICAgICAgbmFtZTogZWxlbWVudE5hbWUsXG4gICAgICAgIHR5cGU6IGNoaWxkVHlwZVxuICAgICAgfSxcbiAgICAgIG5ldyBBYnN0cmFjdEVsZW1lbnQoZWxlbWVudE5hbWUpXG4gICAgKTtcbiAgICBTcGluYWxHcmFwaFNlcnZpY2UuYWRkQ2hpbGRJbkNvbnRleHQobm9kZS5pZC5nZXQoKSwgY2hpbGROb2RlLCBjb250ZXh0LmlkXG4gICAgICAuZ2V0KCksIGNoaWxkUmVsYXRpb24sIFNQSU5BTF9SRUxBVElPTl9UWVBFKTtcbiAgICByZXR1cm4gdHJ1ZTtcbiAgfSxcblxuICAvKipcbiAgICogQHBhcmFtIHtTcGluYWxDb250ZXh0fSBjb250ZXh0IC0gVGhlIENvbnRleHQgZ2VvZ3JhcGhpY1xuICAgKiBAcGFyYW0ge1NwaW5hbE5vZGV9IG5vZGUgLSBUaGUgcGFyZW50IE5vZGVcbiAgICogQHBhcmFtIHtzdHJpbmd9IGJ1aWxkaW5nTmFtZSAtIEJ1aWxkaW5nIE5hbWVcbiAgICovXG4gIGFkZEJ1aWxkaW5nKGNvbnRleHQsIG5vZGUsIGJ1aWxkaW5nTmFtZSkge1xuICAgIHJldHVybiBHZW9ncmFwaGljQ29udGV4dC5hZGRBYnN0cmFjdEVsZW1lbnQoY29udGV4dCwgbm9kZSwgYnVpbGRpbmdOYW1lKTtcbiAgfSxcblxuXG4gIC8qKlxuICAgKiBAcGFyYW0ge1NwaW5hbENvbnRleHR9IGNvbnRleHQgLSBUaGUgQ29udGV4dCBnZW9ncmFwaGljXG4gICAqIEBwYXJhbSB7U3BpbmFsTm9kZX0gbm9kZSAtIFRoZSBwYXJlbnQgTm9kZVxuICAgKiBAcGFyYW0ge3N0cmluZ30gZmxvb3JOYW1lIC0gdGhlIGZsb29yIE5hbWVcbiAgICovXG4gIGFkZEZsb29yKGNvbnRleHQsIG5vZGUsIGZsb29yTmFtZSkge1xuICAgIHJldHVybiBHZW9ncmFwaGljQ29udGV4dC5hZGRBYnN0cmFjdEVsZW1lbnQoY29udGV4dCwgbm9kZSwgZmxvb3JOYW1lKTtcbiAgfSxcblxuXG4gIC8qKlxuICAgKiBAcGFyYW0ge1NwaW5hbENvbnRleHR9IGNvbnRleHQgLSBUaGUgQ29udGV4dCBnZW9ncmFwaGljXG4gICAqIEBwYXJhbSB7U3BpbmFsTm9kZX0gbm9kZSAtIFRoZSBwYXJlbnQgTm9kZVxuICAgKiBAcGFyYW0ge3N0cmluZ30gem9uZU5hbWUgLSBab25lIG5hbWVcbiAgICovXG4gIGFkZFpvbmUoY29udGV4dCwgbm9kZSwgem9uZU5hbWUpIHtcbiAgICByZXR1cm4gR2VvZ3JhcGhpY0NvbnRleHQuYWRkQWJzdHJhY3RFbGVtZW50KGNvbnRleHQsIG5vZGUsIHpvbmVOYW1lKTtcbiAgfSxcblxuXG4gIC8qKlxuICAgKiBAcGFyYW0ge1NwaW5hbENvbnRleHR9IGNvbnRleHQgLSBUaGUgQ29udGV4dCBnZW9ncmFwaGljXG4gICAqIEBwYXJhbSB7U3BpbmFsTm9kZX0gbm9kZSAtIFRoZSBwYXJlbnQgTm9kZVxuICAgKiBAcGFyYW0ge3N0cmluZ30gcm9vbU5hbWUgLSBSb29tIE5hbWVcbiAgICovXG4gIGFkZFJvb20oY29udGV4dCwgbm9kZSwgcm9vbU5hbWUpIHtcbiAgICByZXR1cm4gR2VvZ3JhcGhpY0NvbnRleHQuYWRkQWJzdHJhY3RFbGVtZW50KGNvbnRleHQsIG5vZGUsIHJvb21OYW1lKTtcbiAgfSxcblxuICAvKipcbiAgICogaXQgdXNlcyBiaW1PYmplY3Qgc2VydmljZSB0byBhZGQgYWxsIGRiSWRzIHBhc3NlZCBhcyBwYXJhbWV0ZXJzLlxuICAgKiB0aGUgcGFyYW1ldGVyIGRiSWRzIGNhbiBiZSBhIHNpbXBsZSBkYklkcyBvciBhIGxpc3Qgb2YgZGJJZHMuXG4gICAqIEBwYXJhbSB7U3BpbmFsQ29udGV4dH0gY29udGV4dCAtIFRoZSBDb250ZXh0IGdlb2dyYXBoaWNcbiAgICogQHBhcmFtIHtTcGluYWxOb2RlfSBub2RlIC0gVGhlIHBhcmVudCBOb2RlXG4gICAqIEBwYXJhbSB7TnVtYmVyIHwgQXJyYXk8TnVtYmVyPn0gZGJJZHMgLSBDYW4gYmVcbiAgICovXG4gIGFkZEJpbUVsZW1lbnQoY29udGV4dCwgbm9kZSwgZGJJZHMpIHtcbiAgICBpZiAoIUFycmF5LmlzQXJyYXkoZGJJZHMpKSBkYklkcyA9IFtkYklkc107XG5cblxuICAgIC8vIGxlIGJpbU9iamVjdFNlcnZpY2VcbiAgICBsZXQgYyA9IFNwaW5hbEdyYXBoU2VydmljZS5nZXRSZWFsTm9kZShjb250ZXh0LmlkLmdldCgpKTtcbiAgICBsZXQgbiA9IFNwaW5hbEdyYXBoU2VydmljZS5nZXRSZWFsTm9kZShub2RlLmlkLmdldCgpKTtcblxuICAgIGRiSWRzLmZvckVhY2goZWxlbWVudCA9PiB7XG4gICAgICBiaW1vYmpTZXJ2aWNlLmFkZEJJTU9iamVjdChjLCBuLCBlbGVtZW50LCBcImJpbU9iamVjdF9cIiArXG4gICAgICAgIGVsZW1lbnQpO1xuICAgIH0pO1xuICB9XG59O1xuXG5leHBvcnQgZGVmYXVsdCBHZW9ncmFwaGljQ29udGV4dDsiXX0=
