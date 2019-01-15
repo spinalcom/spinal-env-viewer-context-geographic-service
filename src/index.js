@@ -135,8 +135,7 @@ const GeographicContext = {
     let n = SpinalGraphService.getRealNode(node.id.get());
 
     dbIds.forEach(element => {
-      bimobjService.addBIMObject(c, n, element, "bimObject_" +
-        element);
+      bimobjService.addBIMObject(c, n, element, element);
     });
   }
 };
