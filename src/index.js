@@ -1,5 +1,6 @@
 import {
   SPINAL_RELATION_TYPE,
+  SPINAL_RELATION_LST_PTR_TYPE,
   SpinalGraphService
 } from "spinal-env-viewer-graph-service";
 import {
@@ -8,6 +9,9 @@ import {
 import bimobjService from 'spinal-env-viewer-plugin-bimobjectservice';
 
 import * as constants from "./constants";
+import {
+  Model
+} from "spinal-core-connectorjs_type";
 
 const GeographicContext = {
   constants: constants,
@@ -18,7 +22,8 @@ const GeographicContext = {
    * @return {string} Child type
    */
   getChildType(parentType) {
-    let parentTypeIndex = constants.GEOGRAPHIC_TYPES_ORDER.indexOf(parentType);
+    let parentTypeIndex = constants.GEOGRAPHIC_TYPES_ORDER.indexOf(
+    parentType);
 
     if (parentTypeIndex === -1) {
       return "";
@@ -77,6 +82,9 @@ const GeographicContext = {
     );
     SpinalGraphService.addChildInContext(node.id.get(), childNode, context.id
       .get(), childRelation, SPINAL_RELATION_TYPE);
+
+    this.addToReferenceContext(childNode);
+
     return true;
   },
 
@@ -135,11 +143,96 @@ const GeographicContext = {
     let n = SpinalGraphService.getRealNode(node.id.get());
 
     dbIds.forEach(element => {
-      console.log("element", element);
-
       bimobjService.addBIMObject(c, n, element.dbId, element.name);
     });
+  },
+
+
+  _getReferenceContextName(nodeId) {
+    let node = SpinalGraphService.getInfo(nodeId);
+
+    switch (node.type.get()) {
+      case constants.SITE_TYPE:
+        return {
+          name: constants.SITE_REFERENCE_CONTEXT,
+          relation: constants.SITE_RELATION
+        };
+      case constants.BUILDING_TYPE:
+        return {
+          name: constants.BUILDING_REFERENCE_CONTEXT,
+          relation: constants.BUILDING_RELATION
+        };
+
+      case constants.FLOOR_TYPE:
+        return {
+          name: constants.FLOOR_REFERENCE_CONTEXT,
+          relation: constants.FLOOR_RELATION
+        };
+
+      case constants.ZONE_TYPE:
+        return {
+          name: constants.ZONE_REFERENCE_CONTEXT,
+          relation: constants.ZONE_RELATION
+        };
+
+      case constants.ROOM_TYPE:
+        return {
+          name: constants.ROOM_REFERENCE_CONTEXT,
+          relation: constants.ROOM_RELATION
+        };
+
+      default:
+        return undefined;
+    }
+  },
+
+  /**
+   *
+   * @param {string} nodeId
+   */
+  addToReferenceContext(nodeId) {
+    let obj = this._getReferenceContextName(nodeId);
+
+    if (typeof obj !== "undefined") {
+      let context = SpinalGraphService.getContext(obj.name);
+
+      if (typeof context !== "undefined") {
+
+        return SpinalGraphService.addChild(context.info.id.get(), nodeId,
+          obj.relation,
+          SPINAL_RELATION_LST_PTR_TYPE);
+      }
+
+      return SpinalGraphService.addContext(obj.name, obj.name.replace(
+        ".", ""), new Model({
+        name: obj.name
+      })).then(c => {
+        return SpinalGraphService.addChild(c.info.id.get(), nodeId,
+          obj.relation,
+          SPINAL_RELATION_LST_PTR_TYPE);
+      });
+
+
+    }
+
+  },
+
+  /**
+   *
+   * @param {string} contextId
+   */
+  addContextToReference(contextId) {
+    let context = SpinalGraphService.getRealNode(contextId);
+
+    if (typeof context !== "undefined") {
+      return context.forEach(constants.GEOGRAPHIC_RELATIONS, (node) => {
+        SpinalGraphService._addNode(node);
+        this.addToReferenceContext(node.info.id.get());
+      })
+    }
+
   }
+
 };
 
 export default GeographicContext;
