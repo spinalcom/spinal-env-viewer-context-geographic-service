@@ -6,7 +6,10 @@ import {
 import {
   AbstractElement
 } from "spinal-models-building-elements";
-import bimobjService from 'spinal-env-viewer-plugin-bimobjectservice';
+
+// import bimobjService from 'spinal-env-viewer-plugin-bimobjectservice';
+
+const bimobjService = window.spinal.BimObjectService;
 
 import * as constants from "./constants";
 import {
@@ -23,7 +26,7 @@ const GeographicContext = {
    */
   getChildType(parentType) {
     let parentTypeIndex = constants.GEOGRAPHIC_TYPES_ORDER.indexOf(
-    parentType);
+      parentType);
 
     if (parentTypeIndex === -1) {
       return "";
@@ -134,16 +137,22 @@ const GeographicContext = {
    * @param {SpinalNode} node - The parent Node
    * @param {Number | Array<Number>} dbIds - Can be
    */
-  addBimElement(context, node, dbIds) {
+  addBimElement(context, node, dbIds, model) {
+
     if (!Array.isArray(dbIds)) dbIds = [dbIds];
 
 
     // le bimObjectService
-    let c = SpinalGraphService.getRealNode(context.id.get());
-    let n = SpinalGraphService.getRealNode(node.id.get());
+    // let c = SpinalGraphService.getRealNode(context.id.get());
+    // let n = SpinalGraphService.getRealNode(node.id.get());
+
+    let contextId = context.id.get();
+    let parentId = node.id.get();
 
     dbIds.forEach(element => {
-      bimobjService.addBIMObject(c, n, element.dbId, element.name);
+      // bimobjService.addBIMObject(c, n, element.dbId, element.name);
+      bimobjService.addBIMObject(contextId, parentId, element.dbId,
+        element.name, model)
     });
   },
 
@@ -155,30 +164,30 @@ const GeographicContext = {
       case constants.SITE_TYPE:
         return {
           name: constants.SITE_REFERENCE_CONTEXT,
-          relation: constants.SITE_RELATION
+            relation: constants.SITE_RELATION
         };
       case constants.BUILDING_TYPE:
         return {
           name: constants.BUILDING_REFERENCE_CONTEXT,
-          relation: constants.BUILDING_RELATION
+            relation: constants.BUILDING_RELATION
         };
 
       case constants.FLOOR_TYPE:
         return {
           name: constants.FLOOR_REFERENCE_CONTEXT,
-          relation: constants.FLOOR_RELATION
+            relation: constants.FLOOR_RELATION
         };
 
       case constants.ZONE_TYPE:
         return {
           name: constants.ZONE_REFERENCE_CONTEXT,
-          relation: constants.ZONE_RELATION
+            relation: constants.ZONE_RELATION
         };
 
       case constants.ROOM_TYPE:
         return {
           name: constants.ROOM_REFERENCE_CONTEXT,
-          relation: constants.ROOM_RELATION
+            relation: constants.ROOM_RELATION
         };
 
       default:
