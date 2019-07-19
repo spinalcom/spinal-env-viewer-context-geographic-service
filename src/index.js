@@ -151,7 +151,8 @@ const GeographicContext = {
 
     dbIds.forEach(element => {
       // bimobjService.addBIMObject(c, n, element.dbId, element.name);
-      bimobjService.addBIMObject(contextId, parentId, element.dbId,
+      window.spinal.BimObjectService.addBIMObject(contextId, parentId,
+        element.dbId,
         element.name, model)
     });
   },
