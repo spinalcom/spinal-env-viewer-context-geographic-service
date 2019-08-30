@@ -13,7 +13,7 @@ const BUILDING_RELATION = "hasGeographicBuilding";
 const FLOOR_RELATION = "hasGeographicFloor";
 const ZONE_RELATION = "hasGeographicZone";
 const ROOM_RELATION = "hasGeographicRoom";
-const EQUIPMENT_RELATION = "hasBIMObject";
+const EQUIPMENT_RELATION = "hasBimObject";
 const REFERENCE_RELATION = "hasReference";
 
 
