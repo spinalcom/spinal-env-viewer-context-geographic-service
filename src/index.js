@@ -48,14 +48,14 @@ const GeographicContext = {
 
     const context = SpinalGraphService.getContext(contextName);
 
-    if (typeof context !== "undefined") return false;
+    if (typeof context !== "undefined") return context;
 
 
-    SpinalGraphService.addContext(contextName,
+    return SpinalGraphService.addContext(contextName,
       constants.CONTEXT_TYPE,
       new AbstractElement(contextName));
 
-    return true;
+     
   },
 
   /**
