@@ -55,7 +55,7 @@ const GeographicContext = {
       constants.CONTEXT_TYPE,
       new AbstractElement(contextName));
 
-     
+
   },
 
   /**
@@ -71,7 +71,7 @@ const GeographicContext = {
 
     if (!childType) {
       throw Error(
-        `${parentType} is not a valid type in geographical context`
+        `${parentType} is not a valid type in geographic context`
       );
     }
 
@@ -92,42 +92,103 @@ const GeographicContext = {
   },
 
   /**
-   * @param {SpinalContext} context - The Context geographic
-   * @param {SpinalNode} node - The parent Node
+   * @param {string} contextId - The Context geographic Id
+   * @param {string} parentId - The parent Node Id
    * @param {string} buildingName - Building Name
    */
-  addBuilding(context, node, buildingName) {
-    return GeographicContext.addAbstractElement(context, node, buildingName);
+  addBuilding(contextId, parentId, buildingName) {
+
+    let nodeId = SpinalGraphService.createNode({
+      name: buildingName,
+      type: constants.BUILDING_TYPE
+    }, new AbstractElement(buildingName));
+
+    this.addToReferenceContext(nodeId);
+
+
+    return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
+      constants.BUILDING_RELATION, SPINAL_RELATION_TYPE)
+
   },
 
 
+
+
+
   /**
-   * @param {SpinalContext} context - The Context geographic
-   * @param {SpinalNode} node - The parent Node
+   * @param {string} contextId - The Context geographic Id
+   * @param {string} parentId - The parent Node Id
    * @param {string} floorName - the floor Name
    */
-  addFloor(context, node, floorName) {
-    return GeographicContext.addAbstractElement(context, node, floorName);
+  addFloor(contextId, parentId, floorName) {
+
+    let nodeId = SpinalGraphService.createNode({
+      name: floorName,
+      type: constants.FLOOR_TYPE
+    }, new AbstractElement(floorName));
+
+    this.addToReferenceContext(nodeId);
+
+    return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
+      constants.FLOOR_RELATION, SPINAL_RELATION_TYPE)
+
   },
 
 
   /**
-   * @param {SpinalContext} context - The Context geographic
-   * @param {SpinalNode} node - The parent Node
+   * @param {string} contextId - The Context geographic Id
+   * @param {string} parentId - The parent Node Id
+   * @param {string} siteName - the site Name
+   */
+  addSite(contextId, parentId, siteName) {
+
+    let nodeId = SpinalGraphService.createNode({
+      name: siteName,
+      type: constants.SITE_TYPE
+    }, new AbstractElement(siteName));
+
+    this.addToReferenceContext(nodeId);
+
+    return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
+      constants.SITE_RELATION, SPINAL_RELATION_TYPE)
+
+  },
+
+
+  /**
+   * @param {string} contextId - The Context geographic Id
+   * @param {string} parentId - The parent Node Id
    * @param {string} zoneName - Zone name
    */
-  addZone(context, node, zoneName) {
-    return GeographicContext.addAbstractElement(context, node, zoneName);
+  addZone(contextId, parentId, zoneName) {
+    let nodeId = SpinalGraphService.createNode({
+      name: zoneName,
+      type: constants.ZONE_TYPE
+    }, new AbstractElement(zoneName));
+
+    this.addToReferenceContext(nodeId);
+
+    return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
+      constants.ZONE_RELATION, SPINAL_RELATION_TYPE);
+
   },
 
 
   /**
-   * @param {SpinalContext} context - The Context geographic
-   * @param {SpinalNode} node - The parent Node
+   * @param {string} contextId - The Context geographic
+   * @param {string} parentId - The parent Node
    * @param {string} roomName - Room Name
    */
-  addRoom(context, node, roomName) {
-    return GeographicContext.addAbstractElement(context, node, roomName);
+  addRoom(contextId, parentId, roomName) {
+    let nodeId = SpinalGraphService.createNode({
+      name: roomName,
+      type: constants.ROOM_TYPE
+    }, new AbstractElement(roomName));
+
+    this.addToReferenceContext(nodeId);
+
+    return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
+      constants.ROOM_RELATION, SPINAL_RELATION_TYPE);
   },
 
   /**
