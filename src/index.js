@@ -48,7 +48,7 @@ const GeographicContext = {
 
     const context = SpinalGraphService.getContext(contextName);
 
-    if (typeof context !== "undefined") return context;
+    if (typeof context !== "undefined") return Promise.resolve(context);
 
 
     return SpinalGraphService.addContext(contextName,
