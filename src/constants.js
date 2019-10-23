@@ -14,7 +14,7 @@ const FLOOR_RELATION = "hasGeographicFloor";
 const ZONE_RELATION = "hasGeographicZone";
 const ROOM_RELATION = "hasGeographicRoom";
 const EQUIPMENT_RELATION = "hasBimObject";
-const REFERENCE_RELATION = "hasReference";
+const REFERENCE_RELATION = "hasReferenceObject";
 
 
 const SITE_REFERENCE_CONTEXT = ".SiteContext";
