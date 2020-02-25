@@ -1,5 +1,5 @@
 import {
-  SPINAL_RELATION_TYPE,
+  SPINAL_RELATION_PTR_LST_TYPE,
   SPINAL_RELATION_LST_PTR_TYPE,
   SpinalGraphService
 } from "spinal-env-viewer-graph-service";
@@ -84,7 +84,7 @@ const GeographicContext = {
       new AbstractElement(elementName)
     );
     SpinalGraphService.addChildInContext(node.id.get(), childNode, context.id
-      .get(), childRelation, SPINAL_RELATION_TYPE);
+      .get(), childRelation, SPINAL_RELATION_PTR_LST_TYPE);
 
     this.addToReferenceContext(childNode);
 
@@ -107,7 +107,7 @@ const GeographicContext = {
 
 
     return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
-      constants.BUILDING_RELATION, SPINAL_RELATION_TYPE)
+      constants.BUILDING_RELATION, SPINAL_RELATION_PTR_LST_TYPE)
 
   },
 
@@ -130,7 +130,7 @@ const GeographicContext = {
     this.addToReferenceContext(nodeId);
 
     return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
-      constants.FLOOR_RELATION, SPINAL_RELATION_TYPE)
+      constants.FLOOR_RELATION, SPINAL_RELATION_PTR_LST_TYPE)
 
   },
 
@@ -150,7 +150,7 @@ const GeographicContext = {
     this.addToReferenceContext(nodeId);
 
     return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
-      constants.SITE_RELATION, SPINAL_RELATION_TYPE)
+      constants.SITE_RELATION, SPINAL_RELATION_PTR_LST_TYPE)
 
   },
 
@@ -169,7 +169,7 @@ const GeographicContext = {
     this.addToReferenceContext(nodeId);
 
     return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
-      constants.ZONE_RELATION, SPINAL_RELATION_TYPE);
+      constants.ZONE_RELATION, SPINAL_RELATION_PTR_LST_TYPE);
 
   },
 
@@ -188,7 +188,7 @@ const GeographicContext = {
     this.addToReferenceContext(nodeId);
 
     return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
-      constants.ROOM_RELATION, SPINAL_RELATION_TYPE);
+      constants.ROOM_RELATION, SPINAL_RELATION_PTR_LST_TYPE);
   },
 
   /**
