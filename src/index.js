@@ -1,20 +1,36 @@
+/*
+ * Copyright 2020 SpinalCom - www.spinalcom.com
+ *
+ * This file is part of SpinalCore.
+ *
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
+ *
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
+ *
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
+ */
+
 import {
   SPINAL_RELATION_PTR_LST_TYPE,
   SPINAL_RELATION_LST_PTR_TYPE,
   SpinalGraphService
 } from "spinal-env-viewer-graph-service";
-import {
-  AbstractElement
-} from "spinal-models-building-elements";
-
-// import bimobjService from 'spinal-env-viewer-plugin-bimobjectservice';
-
-const bimobjService = window.spinal.BimObjectService;
+import { AbstractElement } from "spinal-models-building-elements";
 
 import * as constants from "./constants";
-import {
-  Model
-} from "spinal-core-connectorjs_type";
+import { Model } from "spinal-core-connectorjs_type";
 
 const GeographicContext = {
   constants: constants,
@@ -50,12 +66,9 @@ const GeographicContext = {
 
     if (typeof context !== "undefined") return Promise.resolve(context);
 
-
     return SpinalGraphService.addContext(contextName,
       constants.CONTEXT_TYPE,
       new AbstractElement(contextName));
-
-
   },
 
   /**
@@ -77,14 +90,9 @@ const GeographicContext = {
 
     const childRelation = constants.MAP_TYPE_RELATION.get(childType);
 
-    const childNode = SpinalGraphService.createNode({
-        name: elementName,
-        type: childType
-      },
-      new AbstractElement(elementName)
-    );
-    SpinalGraphService.addChildInContext(node.id.get(), childNode, context.id
-      .get(), childRelation, SPINAL_RELATION_PTR_LST_TYPE);
+    const childNode = SpinalGraphService.createNode({ name: elementName, type: childType }, new AbstractElement(elementName));
+    SpinalGraphService.addChildInContext(node.id.get(), childNode,
+      context.id.get(), childRelation, SPINAL_RELATION_PTR_LST_TYPE);
 
     this.addToReferenceContext(childNode);
 
@@ -105,15 +113,9 @@ const GeographicContext = {
 
     this.addToReferenceContext(nodeId);
 
-
     return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
-      constants.BUILDING_RELATION, SPINAL_RELATION_PTR_LST_TYPE)
-
+      constants.BUILDING_RELATION, SPINAL_RELATION_PTR_LST_TYPE);
   },
-
-
-
-
 
   /**
    * @param {string} contextId - The Context geographic Id
@@ -121,7 +123,6 @@ const GeographicContext = {
    * @param {string} floorName - the floor Name
    */
   addFloor(contextId, parentId, floorName) {
-
     let nodeId = SpinalGraphService.createNode({
       name: floorName,
       type: constants.FLOOR_TYPE
@@ -130,8 +131,7 @@ const GeographicContext = {
     this.addToReferenceContext(nodeId);
 
     return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
-      constants.FLOOR_RELATION, SPINAL_RELATION_PTR_LST_TYPE)
-
+      constants.FLOOR_RELATION, SPINAL_RELATION_PTR_LST_TYPE);
   },
 
 
@@ -150,8 +150,7 @@ const GeographicContext = {
     this.addToReferenceContext(nodeId);
 
     return SpinalGraphService.addChildInContext(parentId, nodeId, contextId,
-      constants.SITE_RELATION, SPINAL_RELATION_PTR_LST_TYPE)
-
+      constants.SITE_RELATION, SPINAL_RELATION_PTR_LST_TYPE);
   },
 
 
@@ -214,7 +213,7 @@ const GeographicContext = {
       // bimobjService.addBIMObject(c, n, element.dbId, element.name);
       window.spinal.BimObjectService.addBIMObject(contextId, parentId,
         element.dbId,
-        element.name, model)
+        element.name, model);
     });
   },
 
@@ -226,30 +225,30 @@ const GeographicContext = {
       case constants.SITE_TYPE:
         return {
           name: constants.SITE_REFERENCE_CONTEXT,
-            relation: constants.SITE_RELATION
+          relation: constants.SITE_RELATION
         };
       case constants.BUILDING_TYPE:
         return {
           name: constants.BUILDING_REFERENCE_CONTEXT,
-            relation: constants.BUILDING_RELATION
+          relation: constants.BUILDING_RELATION
         };
 
       case constants.FLOOR_TYPE:
         return {
           name: constants.FLOOR_REFERENCE_CONTEXT,
-            relation: constants.FLOOR_RELATION
+          relation: constants.FLOOR_RELATION
         };
 
       case constants.ZONE_TYPE:
         return {
           name: constants.ZONE_REFERENCE_CONTEXT,
-            relation: constants.ZONE_RELATION
+          relation: constants.ZONE_RELATION
         };
 
       case constants.ROOM_TYPE:
         return {
           name: constants.ROOM_REFERENCE_CONTEXT,
-            relation: constants.ROOM_RELATION
+          relation: constants.ROOM_RELATION
         };
 
       default:
@@ -268,20 +267,15 @@ const GeographicContext = {
       let context = SpinalGraphService.getContext(obj.name);
 
       if (typeof context !== "undefined") {
-
         return SpinalGraphService.addChild(context.info.id.get(), nodeId,
           obj.relation,
           SPINAL_RELATION_LST_PTR_TYPE);
       }
 
-      return SpinalGraphService.addContext(obj.name, obj.name.replace(
-        ".", ""), new Model({
-        name: obj.name
-      })).then(c => {
-        return SpinalGraphService.addChild(c.info.id.get(), nodeId,
-          obj.relation,
-          SPINAL_RELATION_LST_PTR_TYPE);
-      });
+      return SpinalGraphService.addContext(obj.name, obj.name.replace(".", ""), new Model({ name: obj.name }))
+        .then(c => {
+          return SpinalGraphService.addChild(c.info.id.get(), nodeId, obj.relation, SPINAL_RELATION_LST_PTR_TYPE);
+        });
 
 
     }
@@ -299,9 +293,8 @@ const GeographicContext = {
       return context.forEach(constants.GEOGRAPHIC_RELATIONS, (node) => {
         SpinalGraphService._addNode(node);
         this.addToReferenceContext(node.info.id.get());
-      })
+      });
     }
-
   }
 
 };
