@@ -24,7 +24,6 @@
 
 import {
   SPINAL_RELATION_PTR_LST_TYPE,
-  SPINAL_RELATION_LST_PTR_TYPE,
   SpinalGraphService
 } from "spinal-env-viewer-graph-service";
 import { AbstractElement } from "spinal-models-building-elements";
@@ -269,12 +268,12 @@ const GeographicContext = {
       if (typeof context !== "undefined") {
         return SpinalGraphService.addChild(context.info.id.get(), nodeId,
           obj.relation,
-          SPINAL_RELATION_LST_PTR_TYPE);
+          SPINAL_RELATION_PTR_LST_TYPE);
       }
 
       return SpinalGraphService.addContext(obj.name, obj.name.replace(".", ""), new Model({ name: obj.name }))
         .then(c => {
-          return SpinalGraphService.addChild(c.info.id.get(), nodeId, obj.relation, SPINAL_RELATION_LST_PTR_TYPE);
+          return SpinalGraphService.addChild(c.info.id.get(), nodeId, obj.relation, SPINAL_RELATION_PTR_LST_TYPE);
         });
 
 
