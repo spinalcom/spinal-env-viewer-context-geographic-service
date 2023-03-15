@@ -77,12 +77,12 @@ async function addBuilding(
   contextId: string,
   parentId: string,
   buildingName: string
-): Promise<SpinalNodeRef> {
+): Promise<SpinalNode> {
   const context: SpinalContext = getRealNode(contextId);
   const parent: SpinalNode = getRealNode(parentId);
   const node = await addBuildingv2(context, parent, buildingName);
   addNodeGraphService(node);
-  return getInfoGraphService(node.info.id.get());
+  return node;
 }
 
 /**
@@ -94,12 +94,12 @@ async function addFloor(
   contextId: string,
   parentId: string,
   floorName: string
-): Promise<SpinalNodeRef> {
+): Promise<SpinalNode> {
   const context: SpinalContext = getRealNode(contextId);
   const parent: SpinalNode = getRealNode(parentId);
   const node = await addFloorv2(context, parent, floorName);
   addNodeGraphService(node);
-  return getInfoGraphService(node.info.id.get());
+  return node;
 }
 
 /**
@@ -111,12 +111,12 @@ async function addSite(
   contextId: string,
   parentId: string,
   siteName: string
-): Promise<SpinalNodeRef> {
+): Promise<SpinalNode> {
   const context: SpinalContext = getRealNode(contextId);
   const parent: SpinalNode = getRealNode(parentId);
   const node = await addSitev2(context, parent, siteName);
   addNodeGraphService(node);
-  return getInfoGraphService(node.info.id.get());
+  return node;
 }
 
 /**
@@ -128,12 +128,12 @@ async function addZone(
   contextId: string,
   parentId: string,
   zoneName: string
-): Promise<SpinalNodeRef> {
+): Promise<SpinalNode> {
   const context: SpinalContext = getRealNode(contextId);
   const parent: SpinalNode = getRealNode(parentId);
   const node = await addZonev2(context, parent, zoneName);
   addNodeGraphService(node);
-  return getInfoGraphService(node.info.id.get());
+  return node;
 }
 
 /**
@@ -145,12 +145,12 @@ async function addRoom(
   contextId: string,
   parentId: string,
   roomName: string
-): Promise<SpinalNodeRef> {
+): Promise<SpinalNode> {
   const context: SpinalContext = getRealNode(contextId);
   const parent: SpinalNode = getRealNode(parentId);
   const node = await addRoomv2(context, parent, roomName);
   addNodeGraphService(node);
-  return getInfoGraphService(node.info.id.get());
+  return node;
 }
 
 /**

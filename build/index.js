@@ -78,7 +78,7 @@ function addBuilding(contextId, parentId, buildingName) {
         const parent = (0, graphservice_1.getRealNode)(parentId);
         const node = yield (0, geoServiceV2_1.addBuilding)(context, parent, buildingName);
         (0, graphservice_1.addNodeGraphService)(node);
-        return (0, graphservice_1.getInfoGraphService)(node.info.id.get());
+        return node;
     });
 }
 /**
@@ -92,7 +92,7 @@ function addFloor(contextId, parentId, floorName) {
         const parent = (0, graphservice_1.getRealNode)(parentId);
         const node = yield (0, geoServiceV2_1.addFloor)(context, parent, floorName);
         (0, graphservice_1.addNodeGraphService)(node);
-        return (0, graphservice_1.getInfoGraphService)(node.info.id.get());
+        return node;
     });
 }
 /**
@@ -106,7 +106,7 @@ function addSite(contextId, parentId, siteName) {
         const parent = (0, graphservice_1.getRealNode)(parentId);
         const node = yield (0, geoServiceV2_1.addSite)(context, parent, siteName);
         (0, graphservice_1.addNodeGraphService)(node);
-        return (0, graphservice_1.getInfoGraphService)(node.info.id.get());
+        return node;
     });
 }
 /**
@@ -120,7 +120,7 @@ function addZone(contextId, parentId, zoneName) {
         const parent = (0, graphservice_1.getRealNode)(parentId);
         const node = yield (0, geoServiceV2_1.addZone)(context, parent, zoneName);
         (0, graphservice_1.addNodeGraphService)(node);
-        return (0, graphservice_1.getInfoGraphService)(node.info.id.get());
+        return node;
     });
 }
 /**
@@ -134,7 +134,7 @@ function addRoom(contextId, parentId, roomName) {
         const parent = (0, graphservice_1.getRealNode)(parentId);
         const node = yield (0, geoServiceV2_1.addRoom)(context, parent, roomName);
         (0, graphservice_1.addNodeGraphService)(node);
-        return (0, graphservice_1.getInfoGraphService)(node.info.id.get());
+        return node;
     });
 }
 /**

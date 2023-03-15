@@ -1,4 +1,5 @@
 import type { SpinalNodeRef } from 'spinal-env-viewer-graph-service';
+import type { SpinalNode } from 'spinal-model-graph';
 import * as constants from './constants';
 import { getChildType, createContext, TAddBimElementItem } from './geoServiceV2';
 export * from './constants';
@@ -16,31 +17,31 @@ declare function addAbstractElement(contextRef: SpinalNodeRef, parentNodeRef: Sp
  * @param {string} parentId - The parent Node Id
  * @param {string} buildingName - Building Name
  */
-declare function addBuilding(contextId: string, parentId: string, buildingName: string): Promise<SpinalNodeRef>;
+declare function addBuilding(contextId: string, parentId: string, buildingName: string): Promise<SpinalNode>;
 /**
  * @param {string} contextId - The Context geographic Id
  * @param {string} parentId - The parent Node Id
  * @param {string} floorName - the floor Name
  */
-declare function addFloor(contextId: string, parentId: string, floorName: string): Promise<SpinalNodeRef>;
+declare function addFloor(contextId: string, parentId: string, floorName: string): Promise<SpinalNode>;
 /**
  * @param {string} contextId - The Context geographic Id
  * @param {string} parentId - The parent Node Id
  * @param {string} siteName - the site Name
  */
-declare function addSite(contextId: string, parentId: string, siteName: string): Promise<SpinalNodeRef>;
+declare function addSite(contextId: string, parentId: string, siteName: string): Promise<SpinalNode>;
 /**
  * @param {string} contextId - The Context geographic Id
  * @param {string} parentId - The parent Node Id
  * @param {string} zoneName - Zone name
  */
-declare function addZone(contextId: string, parentId: string, zoneName: string): Promise<SpinalNodeRef>;
+declare function addZone(contextId: string, parentId: string, zoneName: string): Promise<SpinalNode>;
 /**
  * @param {string} contextId - The Context geographic
  * @param {string} parentId - The parent Node
  * @param {string} roomName - Room Name
  */
-declare function addRoom(contextId: string, parentId: string, roomName: string): Promise<SpinalNodeRef>;
+declare function addRoom(contextId: string, parentId: string, roomName: string): Promise<SpinalNode>;
 /**
  * it uses bimObject service to add all dbIds passed as parameters.
  * the parameter elements can be a simple or an array of the following element interface.
