@@ -174,12 +174,14 @@ function addToReferenceContext(node) {
 }
 exports.addToReferenceContext = addToReferenceContext;
 function addContextToReference(context) {
-    if (typeof context !== 'undefined') {
-        return context.forEach(constants_1.GEOGRAPHIC_RELATIONS, (node) => {
-            (0, graphservice_1.addNodeGraphService)(node);
-            addToReferenceContext(node);
-        });
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        if (typeof context !== 'undefined') {
+            yield context.map(constants_1.GEOGRAPHIC_RELATIONS, (node) => {
+                (0, graphservice_1.addNodeGraphService)(node);
+                return addToReferenceContext(node);
+            });
+        }
+    });
 }
 exports.addContextToReference = addContextToReference;
 //# sourceMappingURL=geoServiceV2.js.map

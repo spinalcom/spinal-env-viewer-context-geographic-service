@@ -232,6 +232,7 @@ export function _getReferenceContextName(node: SpinalNode): {
       return undefined;
   }
 }
+
 export async function addToReferenceContext(node: SpinalNode): Promise<void> {
   const obj = _getReferenceContextName(node);
   const graph = getGraph();
@@ -249,11 +250,14 @@ export async function addToReferenceContext(node: SpinalNode): Promise<void> {
     await context.addChild(node, obj.relation, SPINAL_RELATION_PTR_LST_TYPE);
   }
 }
-export function addContextToReference(context: SpinalContext): Promise<void> {
+
+export async function addContextToReference(
+  context: SpinalContext
+): Promise<void> {
   if (typeof context !== 'undefined') {
-    return context.forEach(GEOGRAPHIC_RELATIONS, (node) => {
+    await context.map(GEOGRAPHIC_RELATIONS, (node) => {
       addNodeGraphService(node);
-      addToReferenceContext(node);
+      return addToReferenceContext(node);
     });
   }
 }
