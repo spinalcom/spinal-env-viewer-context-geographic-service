@@ -38,6 +38,7 @@ const ZONE_RELATION = 'hasGeographicZone';
 const ROOM_RELATION = 'hasGeographicRoom';
 const EQUIPMENT_RELATION = 'hasBimObject';
 const REFERENCE_RELATION = 'hasReferenceObject';
+const REFERENCE_ROOM_RELATION = 'hasReferenceObject.ROOM';
 
 const SITE_REFERENCE_CONTEXT = '.SiteContext';
 const BUILDING_REFERENCE_CONTEXT = '.BuildingContext';
@@ -130,4 +131,5 @@ export {
   FLOOR_REFERENCE_CONTEXT,
   ZONE_REFERENCE_CONTEXT,
   ROOM_REFERENCE_CONTEXT,
+  REFERENCE_ROOM_RELATION
 };

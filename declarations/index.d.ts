@@ -1,79 +1,82 @@
-import { SpinalNodeRef } from 'spinal-env-viewer-graph-service';
-import { SpinalContext, SpinalNode } from 'spinal-model-graph';
+import type { SpinalNodeRef } from 'spinal-env-viewer-graph-service';
 import * as constants from './constants';
+import { getChildType, createContext, TAddBimElementItem } from './geoServiceV2';
+export * from './constants';
+export * from './geoServiceV2';
+/**
+ * This method takes as parameters a context (SpinalContext), a parent node (must be a SpinalNode) and a string representing the abstract element type;
+ * @param {SpinalNodeRef} contextRef - The Context geographic
+ * @param {SpinalNodeRef} parentNodeRef - The parent Node
+ * @param {string} elementName - The AbstactElement Name
+ * @returns {Promise<SpinalNode>}
+ */
+declare function addAbstractElement(contextRef: SpinalNodeRef, parentNodeRef: SpinalNodeRef, elementName: string): Promise<SpinalNodeRef>;
+/**
+ * @param {string} contextId - The Context geographic Id
+ * @param {string} parentId - The parent Node Id
+ * @param {string} buildingName - Building Name
+ */
+declare function addBuilding(contextId: string, parentId: string, buildingName: string): Promise<SpinalNodeRef>;
+/**
+ * @param {string} contextId - The Context geographic Id
+ * @param {string} parentId - The parent Node Id
+ * @param {string} floorName - the floor Name
+ */
+declare function addFloor(contextId: string, parentId: string, floorName: string): Promise<SpinalNodeRef>;
+/**
+ * @param {string} contextId - The Context geographic Id
+ * @param {string} parentId - The parent Node Id
+ * @param {string} siteName - the site Name
+ */
+declare function addSite(contextId: string, parentId: string, siteName: string): Promise<SpinalNodeRef>;
+/**
+ * @param {string} contextId - The Context geographic Id
+ * @param {string} parentId - The parent Node Id
+ * @param {string} zoneName - Zone name
+ */
+declare function addZone(contextId: string, parentId: string, zoneName: string): Promise<SpinalNodeRef>;
+/**
+ * @param {string} contextId - The Context geographic
+ * @param {string} parentId - The parent Node
+ * @param {string} roomName - Room Name
+ */
+declare function addRoom(contextId: string, parentId: string, roomName: string): Promise<SpinalNodeRef>;
+/**
+ * it uses bimObject service to add all dbIds passed as parameters.
+ * the parameter elements can be a simple or an array of the following element interface.
+ * `{ dbId: number, name: string }`
+ * @param {SpinalNodeRef} contextRef - The Context geographic
+ * @param {SpinalNodeRef} parentRef - The parent Node
+ * @param {TAddBimElementItem | TAddBimElementItem[]} elements
+ */
+declare function addBimElement(contextRef: SpinalNodeRef, parentRef: SpinalNodeRef, elements: TAddBimElementItem | TAddBimElementItem[], model: any): Promise<unknown[]>;
+declare function _getReferenceContextName(nodeId: string): {
+    name: string;
+    relation: string;
+};
+/**
+ *
+ * @param {string} nodeId
+ */
+declare function addToReferenceContext(nodeId: string): Promise<void>;
+/**
+ *
+ * @param {string} contextId
+ */
+declare function addContextToReference(contextId: string): Promise<void>;
 declare const GeographicContext: {
     constants: typeof constants;
-    /**
-     * Returns the child type of the type given as parameter.
-     * @param {string} parentType
-     * @return {string} Child type
-     */
-    getChildType(parentType: string): string;
-    /**
-     * It Takes as parameter a context name, returns true if a context with the same name does not exist, else returns false.
-     * @param {string} contextName
-     * @returns {Boolean}
-     */
-    createContext(contextName: string): Promise<SpinalContext>;
-    /**
-     * This method takes as parameters a context (SpinalContext), a parent node (must be a SpinalNode) and a string representing the abstract element type;
-     * @param {SpinalContext | SpinalNodeRef} context - The Context geographic
-     * @param {SpinalNode | SpinalNodeRef} node - The parent Node
-     * @param {string} elementName - The AbstactElement Name
-     * @returns {Boolean}
-     */
-    addAbstractElement(context: SpinalNodeRef | SpinalContext, node: SpinalNodeRef | SpinalNode, elementName: string): Promise<boolean>;
-    /**
-     * @param {string} contextId - The Context geographic Id
-     * @param {string} parentId - The parent Node Id
-     * @param {string} buildingName - Building Name
-     */
-    addBuilding(contextId: any, parentId: any, buildingName: any): Promise<SpinalNode<any>>;
-    /**
-     * @param {string} contextId - The Context geographic Id
-     * @param {string} parentId - The parent Node Id
-     * @param {string} floorName - the floor Name
-     */
-    addFloor(contextId: any, parentId: any, floorName: any): Promise<SpinalNode<any>>;
-    /**
-     * @param {string} contextId - The Context geographic Id
-     * @param {string} parentId - The parent Node Id
-     * @param {string} siteName - the site Name
-     */
-    addSite(contextId: any, parentId: any, siteName: any): Promise<SpinalNode<any>>;
-    /**
-     * @param {string} contextId - The Context geographic Id
-     * @param {string} parentId - The parent Node Id
-     * @param {string} zoneName - Zone name
-     */
-    addZone(contextId: any, parentId: any, zoneName: any): Promise<SpinalNode<any>>;
-    /**
-     * @param {string} contextId - The Context geographic
-     * @param {string} parentId - The parent Node
-     * @param {string} roomName - Room Name
-     */
-    addRoom(contextId: any, parentId: any, roomName: any): Promise<SpinalNode<any>>;
-    /**
-     * it uses bimObject service to add all dbIds passed as parameters.
-     * the parameter dbIds can be a simple dbIds or a list of dbIds.
-     * @param {SpinalContext} context - The Context geographic
-     * @param {SpinalNode} node - The parent Node
-     * @param {Number | Array<Number>} dbIds - Can be
-     */
-    addBimElement(context: any, node: any, dbIds: any, model: any): void;
-    _getReferenceContextName(nodeId: any): {
-        name: string;
-        relation: string;
-    };
-    /**
-     *
-     * @param {string} nodeId
-     */
-    addToReferenceContext(nodeId: any): Promise<boolean>;
-    /**
-     *
-     * @param {string} contextId
-     */
-    addContextToReference(contextId: any): Promise<void>;
+    getChildType: typeof getChildType;
+    createContext: typeof createContext;
+    addAbstractElement: typeof addAbstractElement;
+    addBuilding: typeof addBuilding;
+    addFloor: typeof addFloor;
+    addSite: typeof addSite;
+    addZone: typeof addZone;
+    addRoom: typeof addRoom;
+    addBimElement: typeof addBimElement;
+    _getReferenceContextName: typeof _getReferenceContextName;
+    addToReferenceContext: typeof addToReferenceContext;
+    addContextToReference: typeof addContextToReference;
 };
 export default GeographicContext;

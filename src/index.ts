@@ -22,328 +22,196 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 
-import {
-  SpinalGraphService,
-  SpinalNodeRef,
-} from 'spinal-env-viewer-graph-service';
-import {
-  SPINAL_RELATION_PTR_LST_TYPE,
-  SpinalContext,
-  SpinalNode,
-} from 'spinal-model-graph';
-import { AbstractElement } from 'spinal-models-building-elements';
-
+import type { SpinalNodeRef } from 'spinal-env-viewer-graph-service';
+import type { SpinalContext, SpinalNode } from 'spinal-model-graph';
 import * as constants from './constants';
-import { Model } from 'spinal-core-connectorjs';
+import {
+  getChildType,
+  createContext,
+  addAbstractElement as addAbstractElementv2,
+  addBuilding as addBuildingv2,
+  addFloor as addFloorv2,
+  addSite as addSitev2,
+  addZone as addZonev2,
+  addRoom as addRoomv2,
+  addBimElement as addBimElementv2,
+  _getReferenceContextName as _getReferenceContextNamev2,
+  addToReferenceContext as addToReferenceContextv2,
+  addContextToReference as addContextToReferencev2,
+  TAddBimElementItem,
+} from './geoServiceV2';
+import {
+  addNodeGraphService,
+  getInfoGraphService,
+  getRealNode,
+} from './graphservice';
+
+export * from './constants';
+export * from './geoServiceV2';
+
+/**
+ * This method takes as parameters a context (SpinalContext), a parent node (must be a SpinalNode) and a string representing the abstract element type;
+ * @param {SpinalNodeRef} contextRef - The Context geographic
+ * @param {SpinalNodeRef} parentNodeRef - The parent Node
+ * @param {string} elementName - The AbstactElement Name
+ * @returns {Promise<SpinalNode>}
+ */
+async function addAbstractElement(
+  contextRef: SpinalNodeRef,
+  parentNodeRef: SpinalNodeRef,
+  elementName: string
+): Promise<SpinalNodeRef> {
+  const context: SpinalContext = getRealNode(contextRef.id.get());
+  const parent: SpinalNode = getRealNode(parentNodeRef.id.get());
+  const node = await addAbstractElementv2(context, parent, elementName);
+  addNodeGraphService(node);
+  return getInfoGraphService(node.info.id.get());
+}
+
+/**
+ * @param {string} contextId - The Context geographic Id
+ * @param {string} parentId - The parent Node Id
+ * @param {string} buildingName - Building Name
+ */
+async function addBuilding(
+  contextId: string,
+  parentId: string,
+  buildingName: string
+): Promise<SpinalNodeRef> {
+  const context: SpinalContext = getRealNode(contextId);
+  const parent: SpinalNode = getRealNode(parentId);
+  const node = await addBuildingv2(context, parent, buildingName);
+  addNodeGraphService(node);
+  return getInfoGraphService(node.info.id.get());
+}
+
+/**
+ * @param {string} contextId - The Context geographic Id
+ * @param {string} parentId - The parent Node Id
+ * @param {string} floorName - the floor Name
+ */
+async function addFloor(
+  contextId: string,
+  parentId: string,
+  floorName: string
+): Promise<SpinalNodeRef> {
+  const context: SpinalContext = getRealNode(contextId);
+  const parent: SpinalNode = getRealNode(parentId);
+  const node = await addFloorv2(context, parent, floorName);
+  addNodeGraphService(node);
+  return getInfoGraphService(node.info.id.get());
+}
+
+/**
+ * @param {string} contextId - The Context geographic Id
+ * @param {string} parentId - The parent Node Id
+ * @param {string} siteName - the site Name
+ */
+async function addSite(
+  contextId: string,
+  parentId: string,
+  siteName: string
+): Promise<SpinalNodeRef> {
+  const context: SpinalContext = getRealNode(contextId);
+  const parent: SpinalNode = getRealNode(parentId);
+  const node = await addSitev2(context, parent, siteName);
+  addNodeGraphService(node);
+  return getInfoGraphService(node.info.id.get());
+}
+
+/**
+ * @param {string} contextId - The Context geographic Id
+ * @param {string} parentId - The parent Node Id
+ * @param {string} zoneName - Zone name
+ */
+async function addZone(
+  contextId: string,
+  parentId: string,
+  zoneName: string
+): Promise<SpinalNodeRef> {
+  const context: SpinalContext = getRealNode(contextId);
+  const parent: SpinalNode = getRealNode(parentId);
+  const node = await addZonev2(context, parent, zoneName);
+  addNodeGraphService(node);
+  return getInfoGraphService(node.info.id.get());
+}
+
+/**
+ * @param {string} contextId - The Context geographic
+ * @param {string} parentId - The parent Node
+ * @param {string} roomName - Room Name
+ */
+async function addRoom(
+  contextId: string,
+  parentId: string,
+  roomName: string
+): Promise<SpinalNodeRef> {
+  const context: SpinalContext = getRealNode(contextId);
+  const parent: SpinalNode = getRealNode(parentId);
+  const node = await addRoomv2(context, parent, roomName);
+  addNodeGraphService(node);
+  return getInfoGraphService(node.info.id.get());
+}
+
+/**
+ * it uses bimObject service to add all dbIds passed as parameters.
+ * the parameter elements can be a simple or an array of the following element interface.
+ * `{ dbId: number, name: string }`
+ * @param {SpinalNodeRef} contextRef - The Context geographic
+ * @param {SpinalNodeRef} parentRef - The parent Node
+ * @param {TAddBimElementItem | TAddBimElementItem[]} elements
+ */
+function addBimElement(
+  contextRef: SpinalNodeRef,
+  parentRef: SpinalNodeRef,
+  elements: TAddBimElementItem | TAddBimElementItem[],
+  model: any
+): Promise<unknown[]> {
+  let context = getRealNode(contextRef.id.get());
+  let parent = getRealNode(parentRef.id.get());
+  return addBimElementv2(context, parent, elements, model);
+}
+
+function _getReferenceContextName(nodeId: string): {
+  name: string;
+  relation: string;
+} {
+  let node = getRealNode(nodeId);
+  return _getReferenceContextNamev2(node);
+}
+
+/**
+ *
+ * @param {string} nodeId
+ */
+async function addToReferenceContext(nodeId: string): Promise<void> {
+  let node = getRealNode(nodeId);
+  return addToReferenceContextv2(node);
+}
+
+/**
+ *
+ * @param {string} contextId
+ */
+function addContextToReference(contextId: string): Promise<void> {
+  let context = getRealNode(contextId);
+  return addContextToReferencev2(context);
+}
 
 const GeographicContext = {
   constants,
-
-  /**
-   * Returns the child type of the type given as parameter.
-   * @param {string} parentType
-   * @return {string} Child type
-   */
-  getChildType(parentType: string): string {
-    let parentTypeIndex = constants.GEOGRAPHIC_TYPES_ORDER.indexOf(parentType);
-    if (parentTypeIndex === -1) {
-      return '';
-    }
-    return constants.GEOGRAPHIC_TYPES_ORDER[parentTypeIndex + 1];
-  },
-
-  /**
-   * It Takes as parameter a context name, returns true if a context with the same name does not exist, else returns false.
-   * @param {string} contextName
-   * @returns {Boolean}
-   */
-  createContext(contextName: string): Promise<SpinalContext> {
-    if (typeof contextName !== 'string') {
-      throw Error('contextName must be a string');
-    }
-    const context = SpinalGraphService.getContext(contextName);
-    if (typeof context !== 'undefined') return Promise.resolve(context);
-    return SpinalGraphService.addContext(contextName, constants.CONTEXT_TYPE);
-  },
-
-  /**
-   * This method takes as parameters a context (SpinalContext), a parent node (must be a SpinalNode) and a string representing the abstract element type;
-   * @param {SpinalContext | SpinalNodeRef} context - The Context geographic
-   * @param {SpinalNode | SpinalNodeRef} node - The parent Node
-   * @param {string} elementName - The AbstactElement Name
-   * @returns {Boolean}
-   */
-  async addAbstractElement(
-    context: SpinalNodeRef | SpinalContext,
-    node: SpinalNodeRef | SpinalNode,
-    elementName: string
-  ): Promise<boolean> {
-    const parentType = node.type.get();
-    const childType = this.getChildType(parentType);
-    if (!childType) {
-      throw Error(`${parentType} is not a valid type in geographic context`);
-    }
-    const contextId: string = context.id?.get() || context.info.id.get();
-    const nodeId: string = node.id?.get() || node.info.id.get();
-
-    const childRelation = constants.MAP_TYPE_RELATION.get(childType);
-    const childNode = SpinalGraphService.createNode(
-      { name: elementName, type: childType },
-      new AbstractElement(elementName)
-    );
-    await SpinalGraphService.addChildInContext(
-      nodeId,
-      childNode,
-      contextId,
-      childRelation,
-      SPINAL_RELATION_PTR_LST_TYPE
-    );
-
-    this.addToReferenceContext(childNode);
-
-    return true;
-  },
-
-  /**
-   * @param {string} contextId - The Context geographic Id
-   * @param {string} parentId - The parent Node Id
-   * @param {string} buildingName - Building Name
-   */
-  addBuilding(contextId, parentId, buildingName) {
-    let nodeId = SpinalGraphService.createNode(
-      {
-        name: buildingName,
-        type: constants.BUILDING_TYPE,
-      },
-      new AbstractElement(buildingName)
-    );
-
-    this.addToReferenceContext(nodeId);
-
-    return SpinalGraphService.addChildInContext(
-      parentId,
-      nodeId,
-      contextId,
-      constants.BUILDING_RELATION,
-      SPINAL_RELATION_PTR_LST_TYPE
-    );
-  },
-
-  /**
-   * @param {string} contextId - The Context geographic Id
-   * @param {string} parentId - The parent Node Id
-   * @param {string} floorName - the floor Name
-   */
-  addFloor(contextId, parentId, floorName) {
-    let nodeId = SpinalGraphService.createNode(
-      {
-        name: floorName,
-        type: constants.FLOOR_TYPE,
-      },
-      new AbstractElement(floorName)
-    );
-
-    this.addToReferenceContext(nodeId);
-
-    return SpinalGraphService.addChildInContext(
-      parentId,
-      nodeId,
-      contextId,
-      constants.FLOOR_RELATION,
-      SPINAL_RELATION_PTR_LST_TYPE
-    );
-  },
-
-  /**
-   * @param {string} contextId - The Context geographic Id
-   * @param {string} parentId - The parent Node Id
-   * @param {string} siteName - the site Name
-   */
-  addSite(contextId, parentId, siteName) {
-    let nodeId = SpinalGraphService.createNode(
-      {
-        name: siteName,
-        type: constants.SITE_TYPE,
-      },
-      new AbstractElement(siteName)
-    );
-
-    this.addToReferenceContext(nodeId);
-
-    return SpinalGraphService.addChildInContext(
-      parentId,
-      nodeId,
-      contextId,
-      constants.SITE_RELATION,
-      SPINAL_RELATION_PTR_LST_TYPE
-    );
-  },
-
-  /**
-   * @param {string} contextId - The Context geographic Id
-   * @param {string} parentId - The parent Node Id
-   * @param {string} zoneName - Zone name
-   */
-  addZone(contextId, parentId, zoneName) {
-    let nodeId = SpinalGraphService.createNode(
-      {
-        name: zoneName,
-        type: constants.ZONE_TYPE,
-      },
-      new AbstractElement(zoneName)
-    );
-
-    this.addToReferenceContext(nodeId);
-
-    return SpinalGraphService.addChildInContext(
-      parentId,
-      nodeId,
-      contextId,
-      constants.ZONE_RELATION,
-      SPINAL_RELATION_PTR_LST_TYPE
-    );
-  },
-
-  /**
-   * @param {string} contextId - The Context geographic
-   * @param {string} parentId - The parent Node
-   * @param {string} roomName - Room Name
-   */
-  addRoom(contextId, parentId, roomName) {
-    let nodeId = SpinalGraphService.createNode(
-      {
-        name: roomName,
-        type: constants.ROOM_TYPE,
-      },
-      new AbstractElement(roomName)
-    );
-
-    this.addToReferenceContext(nodeId);
-
-    return SpinalGraphService.addChildInContext(
-      parentId,
-      nodeId,
-      contextId,
-      constants.ROOM_RELATION,
-      SPINAL_RELATION_PTR_LST_TYPE
-    );
-  },
-
-  /**
-   * it uses bimObject service to add all dbIds passed as parameters.
-   * the parameter dbIds can be a simple dbIds or a list of dbIds.
-   * @param {SpinalContext} context - The Context geographic
-   * @param {SpinalNode} node - The parent Node
-   * @param {Number | Array<Number>} dbIds - Can be
-   */
-  addBimElement(context, node, dbIds, model) {
-    if (!Array.isArray(dbIds)) dbIds = [dbIds];
-
-    // le bimObjectService
-    // let c = SpinalGraphService.getRealNode(context.id.get());
-    // let n = SpinalGraphService.getRealNode(node.id.get());
-
-    let contextId = context.id.get();
-    let parentId = node.id.get();
-
-    dbIds.forEach((element) => {
-      // bimobjService.addBIMObject(c, n, element.dbId, element.name);
-      window.spinal.BimObjectService.addBIMObject(
-        contextId,
-        parentId,
-        element.dbId,
-        element.name,
-        model
-      );
-    });
-  },
-
-  _getReferenceContextName(nodeId) {
-    let node = SpinalGraphService.getInfo(nodeId);
-
-    switch (node.type.get()) {
-      case constants.SITE_TYPE:
-        return {
-          name: constants.SITE_REFERENCE_CONTEXT,
-          relation: constants.SITE_RELATION,
-        };
-      case constants.BUILDING_TYPE:
-        return {
-          name: constants.BUILDING_REFERENCE_CONTEXT,
-          relation: constants.BUILDING_RELATION,
-        };
-
-      case constants.FLOOR_TYPE:
-        return {
-          name: constants.FLOOR_REFERENCE_CONTEXT,
-          relation: constants.FLOOR_RELATION,
-        };
-
-      case constants.ZONE_TYPE:
-        return {
-          name: constants.ZONE_REFERENCE_CONTEXT,
-          relation: constants.ZONE_RELATION,
-        };
-
-      case constants.ROOM_TYPE:
-        return {
-          name: constants.ROOM_REFERENCE_CONTEXT,
-          relation: constants.ROOM_RELATION,
-        };
-
-      default:
-        return undefined;
-    }
-  },
-
-  /**
-   *
-   * @param {string} nodeId
-   */
-  addToReferenceContext(nodeId) {
-    let obj = this._getReferenceContextName(nodeId);
-
-    if (typeof obj !== 'undefined') {
-      let context = SpinalGraphService.getContext(obj.name);
-
-      if (typeof context !== 'undefined') {
-        return SpinalGraphService.addChild(
-          context.info.id.get(),
-          nodeId,
-          obj.relation,
-          SPINAL_RELATION_PTR_LST_TYPE
-        );
-      }
-
-      return SpinalGraphService.addContext(
-        obj.name,
-        obj.name.replace('.', ''),
-        new Model({ name: obj.name })
-      ).then((c) => {
-        return SpinalGraphService.addChild(
-          c.info.id.get(),
-          nodeId,
-          obj.relation,
-          SPINAL_RELATION_PTR_LST_TYPE
-        );
-      });
-    }
-  },
-
-  /**
-   *
-   * @param {string} contextId
-   */
-  addContextToReference(contextId) {
-    let context = SpinalGraphService.getRealNode(contextId);
-    if (typeof context !== 'undefined') {
-      return context.forEach(constants.GEOGRAPHIC_RELATIONS, (node) => {
-        // @ts-ignore
-        SpinalGraphService._addNode(node);
-        this.addToReferenceContext(node.info.id.get());
-      });
-    }
-  },
+  getChildType,
+  createContext,
+  addAbstractElement,
+  addBuilding,
+  addFloor,
+  addSite,
+  addZone,
+  addRoom,
+  addBimElement,
+  _getReferenceContextName,
+  addToReferenceContext,
+  addContextToReference,
 };
 
 export default GeographicContext;
