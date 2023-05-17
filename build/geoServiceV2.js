@@ -21,7 +21,7 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addContextToReference = exports.addToReferenceContext = exports._getReferenceContextName = exports.addBimElement = exports.addRoom = exports.addZone = exports.addSite = exports.addFloor = exports.addBuilding = exports.addAbstractElement = exports.createContext = exports.getChildType = void 0;
+exports.addContextToReference = exports.getOrCreateRefContext = exports.addToReferenceContext = exports._getReferenceContextName = exports.addBimElement = exports.addRoom = exports.addZone = exports.addSite = exports.addFloor = exports.addBuilding = exports.addAbstractElement = exports.createContext = exports.getChildType = void 0;
 /*
  * Copyright 2023 SpinalCom - www.spinalcom.com
  *
@@ -198,6 +198,7 @@ function getOrCreateRefContext(contextName) {
         return (yield dicoContextRef.get(contextName).next()).value;
     });
 }
+exports.getOrCreateRefContext = getOrCreateRefContext;
 function addContextToReference(context) {
     return __awaiter(this, void 0, void 0, function* () {
         if (typeof context !== 'undefined') {

@@ -260,7 +260,9 @@ async function* _getOrCreateRefContext(
   while (true) yield context;
 }
 
-async function getOrCreateRefContext(contextName: string) {
+export async function getOrCreateRefContext(
+  contextName: string
+): Promise<SpinalNode> {
   if (!dicoContextRef.has(contextName)) {
     const gen = _getOrCreateRefContext(contextName);
     dicoContextRef.set(contextName, gen);
