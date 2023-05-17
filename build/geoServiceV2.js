@@ -8,6 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __await = (this && this.__await) || function (v) { return this instanceof __await ? (this.v = v, this) : new __await(v); }
+var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g = generator.apply(thisArg, _arguments || []), i, q = [];
+    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
+    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
+    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
+    function fulfill(value) { resume("next", value); }
+    function reject(value) { resume("throw", value); }
+    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addContextToReference = exports.addToReferenceContext = exports._getReferenceContextName = exports.addBimElement = exports.addRoom = exports.addZone = exports.addSite = exports.addFloor = exports.addBuilding = exports.addAbstractElement = exports.createContext = exports.getChildType = void 0;
 /*
@@ -36,6 +48,7 @@ exports.addContextToReference = exports.addToReferenceContext = exports._getRefe
 const spinal_model_graph_1 = require("spinal-model-graph");
 const constants_1 = require("./constants");
 const graphservice_1 = require("./graphservice");
+const dicoContextRef = new Map();
 /**
  * Returns the child type of the type given as parameter.
  * @param {string} parentType
@@ -156,23 +169,35 @@ exports._getReferenceContextName = _getReferenceContextName;
 function addToReferenceContext(node) {
     return __awaiter(this, void 0, void 0, function* () {
         const obj = _getReferenceContextName(node);
-        const graph = (0, graphservice_1.getGraph)();
         if (typeof obj !== 'undefined') {
-            let context = yield graph.getContext(obj.name);
-            if (typeof context !== 'undefined') {
-                const ids = context.getChildrenIds();
-                if (ids.includes(node.info.id.get()))
-                    return;
-                yield context.addChild(node, obj.relation, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE);
-            }
-            context = new spinal_model_graph_1.SpinalContext(obj.name, obj.name.replace('.', ''));
-            (0, graphservice_1.addNodeGraphService)(context);
-            yield graph.addContext(context);
+            let context = yield getOrCreateRefContext(obj.name);
             yield context.addChild(node, obj.relation, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE);
         }
     });
 }
 exports.addToReferenceContext = addToReferenceContext;
+function _getOrCreateRefContext(contextName) {
+    return __asyncGenerator(this, arguments, function* _getOrCreateRefContext_1() {
+        const graph = (0, graphservice_1.getGraph)();
+        let context = yield __await(graph.getContext(contextName));
+        if (!context) {
+            context = new spinal_model_graph_1.SpinalContext(contextName, contextName.replace('.', ''));
+            yield __await(graph.addContext(context));
+        }
+        (0, graphservice_1.addNodeGraphService)(context);
+        while (true)
+            yield yield __await(context);
+    });
+}
+function getOrCreateRefContext(contextName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!dicoContextRef.has(contextName)) {
+            const gen = _getOrCreateRefContext(contextName);
+            dicoContextRef.set(contextName, gen);
+        }
+        return (yield dicoContextRef.get(contextName).next()).value;
+    });
+}
 function addContextToReference(context) {
     return __awaiter(this, void 0, void 0, function* () {
         if (typeof context !== 'undefined') {
