@@ -49,6 +49,11 @@ import {
 } from './constants';
 import { addNodeGraphService, getGraph } from './graphservice';
 
+const dicoContextRef = new Map<
+  string,
+  AsyncGenerator<SpinalNode, never, never>
+>();
+
 /**
  * Returns the child type of the type given as parameter.
  * @param {string} parentType
@@ -235,20 +240,34 @@ export function _getReferenceContextName(node: SpinalNode): {
 
 export async function addToReferenceContext(node: SpinalNode): Promise<void> {
   const obj = _getReferenceContextName(node);
-  const graph = getGraph();
 
   if (typeof obj !== 'undefined') {
-    let context = await graph.getContext(obj.name);
-    if (typeof context !== 'undefined') {
-      const ids = context.getChildrenIds();
-      if (ids.includes(node.info.id.get())) return;
-      await context.addChild(node, obj.relation, SPINAL_RELATION_PTR_LST_TYPE);
-    }
-    context = new SpinalContext(obj.name, obj.name.replace('.', ''));
-    addNodeGraphService(context);
-    await graph.addContext(context);
+    let context = await getOrCreateRefContext(obj.name);
     await context.addChild(node, obj.relation, SPINAL_RELATION_PTR_LST_TYPE);
   }
+}
+
+async function* _getOrCreateRefContext(
+  contextName: string
+): AsyncGenerator<SpinalNode<any>, never, never> {
+  const graph = getGraph();
+  let context = await graph.getContext(contextName);
+  if (!context) {
+    context = new SpinalContext(contextName, contextName.replace('.', ''));
+    await graph.addContext(context);
+  }
+  addNodeGraphService(context);
+  while (true) yield context;
+}
+
+export async function getOrCreateRefContext(
+  contextName: string
+): Promise<SpinalNode> {
+  if (!dicoContextRef.has(contextName)) {
+    const gen = _getOrCreateRefContext(contextName);
+    dicoContextRef.set(contextName, gen);
+  }
+  return (await dicoContextRef.get(contextName)!.next()).value;
 }
 
 export async function addContextToReference(

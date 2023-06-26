@@ -22,4 +22,5 @@ export declare function _getReferenceContextName(node: SpinalNode): {
     relation: string;
 };
 export declare function addToReferenceContext(node: SpinalNode): Promise<void>;
+export declare function getOrCreateRefContext(contextName: string): Promise<SpinalNode>;
 export declare function addContextToReference(context: SpinalContext): Promise<void>;
