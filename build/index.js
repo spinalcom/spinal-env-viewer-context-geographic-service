@@ -152,7 +152,7 @@ function addBimElement(contextRef, parentRef, elements, model) {
 }
 function _getReferenceContextName(nodeId) {
     let node = (0, graphservice_1.getRealNode)(nodeId);
-    return (0, geoServiceV2_1._getReferenceContextName)(node);
+    return (0, geoServiceV2_1._getReferenceContextName)(node.info.type.get());
 }
 /**
  *

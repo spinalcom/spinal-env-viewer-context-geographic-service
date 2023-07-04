@@ -83,92 +83,90 @@ export async function createContext(
 export async function addAbstractElement(
   context: SpinalContext,
   parent: SpinalNode,
-  elementName: string
+  elementName: string,
+  id?: string
 ): Promise<SpinalNode> {
-  const parentType = parent.type.get();
+  const parentType = parent.info.type.get();
   const childType = getChildType(parentType);
   if (!childType) {
     throw Error(`${parentType} is not a valid type in geographic context`);
   }
-  const childRelation = MAP_TYPE_RELATION.get(childType);
-  const childNode = new SpinalNode(elementName, childType);
-  await parent.addChildInContext(
-    childNode,
-    childRelation,
-    SPINAL_RELATION_PTR_LST_TYPE,
-    context
+  return getOrCreateElemFromReferenceContext(
+    childType,
+    context,
+    parent,
+    elementName,
+    id
   );
-  addToReferenceContext(childNode);
-  return childNode;
 }
 export function addBuilding(
   context: SpinalContext,
   parent: SpinalNode,
-  elementName: string
+  elementName: string,
+  id?: string
 ) {
-  const child = new SpinalNode(elementName, BUILDING_TYPE);
-  addToReferenceContext(child);
-  return parent.addChildInContext(
-    child,
-    BUILDING_RELATION,
-    SPINAL_RELATION_PTR_LST_TYPE,
-    context
+  return getOrCreateElemFromReferenceContext(
+    BUILDING_TYPE,
+    context,
+    parent,
+    elementName,
+    id
   );
 }
 export function addFloor(
   context: SpinalContext,
   parent: SpinalNode,
-  elementName: string
+  elementName: string,
+  id?: string
 ) {
-  const child = new SpinalNode(elementName, FLOOR_TYPE);
-  addToReferenceContext(child);
-  return parent.addChildInContext(
-    child,
-    FLOOR_RELATION,
-    SPINAL_RELATION_PTR_LST_TYPE,
-    context
+  return getOrCreateElemFromReferenceContext(
+    FLOOR_TYPE,
+    context,
+    parent,
+    elementName,
+    id
   );
 }
 export function addSite(
   context: SpinalContext,
   parent: SpinalNode,
-  elementName: string
+  elementName: string,
+  id?: string
 ) {
-  const child = new SpinalNode(elementName, SITE_TYPE);
-  addToReferenceContext(child);
-  return parent.addChildInContext(
-    child,
-    SITE_RELATION,
-    SPINAL_RELATION_PTR_LST_TYPE,
-    context
+  return getOrCreateElemFromReferenceContext(
+    SITE_TYPE,
+    context,
+    parent,
+    elementName,
+    id
   );
 }
 export function addZone(
   context: SpinalContext,
   parent: SpinalNode,
-  elementName: string
+  elementName: string,
+  id?: string
 ) {
-  const child = new SpinalNode(elementName, ZONE_TYPE);
-  addToReferenceContext(child);
-  return parent.addChildInContext(
-    child,
-    ZONE_RELATION,
-    SPINAL_RELATION_PTR_LST_TYPE,
-    context
+  return getOrCreateElemFromReferenceContext(
+    ZONE_TYPE,
+    context,
+    parent,
+    elementName,
+    id
   );
 }
 export function addRoom(
   context: SpinalContext,
   parent: SpinalNode,
-  elementName: string
+  elementName: string,
+  id?: string
 ) {
-  const child = new SpinalNode(elementName, ROOM_TYPE);
-  addToReferenceContext(child);
-  return parent.addChildInContext(
-    child,
-    ROOM_RELATION,
-    SPINAL_RELATION_PTR_LST_TYPE,
-    context
+  return getOrCreateElemFromReferenceContext(
+    ROOM_TYPE,
+    context,
+    parent,
+    elementName,
+    id
   );
 }
 
@@ -185,8 +183,8 @@ export function addBimElement(
   const elems = Array.isArray(elements) ? elements : [elements];
   let contextId = context.info.id.get();
   let parentId = parent.info.id.get();
-  addToReferenceContext(context);
-  addToReferenceContext(parent);
+  addNodeGraphService(context);
+  addNodeGraphService(parent);
   return Promise.all(
     elems.map((element) => {
       return window.spinal.BimObjectService.addBIMObject(
@@ -199,11 +197,11 @@ export function addBimElement(
     })
   );
 }
-export function _getReferenceContextName(node: SpinalNode): {
+export function _getReferenceContextName(nodeType: string): {
   name: string;
   relation: string;
 } {
-  switch (node.info.type.get()) {
+  switch (nodeType) {
     case SITE_TYPE:
       return {
         name: SITE_REFERENCE_CONTEXT,
@@ -239,12 +237,43 @@ export function _getReferenceContextName(node: SpinalNode): {
 }
 
 export async function addToReferenceContext(node: SpinalNode): Promise<void> {
-  const obj = _getReferenceContextName(node);
+  const obj = _getReferenceContextName(node.info.type.get());
 
   if (typeof obj !== 'undefined') {
     let context = await getOrCreateRefContext(obj.name);
     await context.addChild(node, obj.relation, SPINAL_RELATION_PTR_LST_TYPE);
   }
+}
+
+export async function getOrCreateElemFromReferenceContext(
+  nodeType: string,
+  context: SpinalContext,
+  parent: SpinalNode,
+  elementName: string,
+  id?: string
+): Promise<SpinalNode> {
+  const obj = _getReferenceContextName(nodeType);
+  if (typeof obj === 'undefined')
+    throw new Error(`error unknonw node type : ${nodeType}`);
+
+  const refContext = await getOrCreateRefContext(obj.name);
+  let node;
+  if (typeof id !== 'undefined') {
+    const refNodes = await refContext.getChildren(obj.relation);
+    node = refNodes.find((itm) => itm.info.id.get() === id);
+  }
+  if (!node) {
+    node = new SpinalNode(elementName, nodeType);
+    if (typeof id !== 'undefined') node.info.id.set(id);
+    await refContext.addChild(node, obj.relation, SPINAL_RELATION_PTR_LST_TYPE);
+  }
+  await parent.addChildInContext(
+    node,
+    obj.relation,
+    SPINAL_RELATION_PTR_LST_TYPE,
+    context
+  );
+  return node;
 }
 
 async function* _getOrCreateRefContext(

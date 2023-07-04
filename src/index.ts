@@ -177,7 +177,7 @@ function _getReferenceContextName(nodeId: string): {
   relation: string;
 } {
   let node = getRealNode(nodeId);
-  return _getReferenceContextNamev2(node);
+  return _getReferenceContextNamev2(node.info.type.get());
 }
 
 /**

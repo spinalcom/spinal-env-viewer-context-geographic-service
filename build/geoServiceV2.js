@@ -21,7 +21,7 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addContextToReference = exports.getOrCreateRefContext = exports.addToReferenceContext = exports._getReferenceContextName = exports.addBimElement = exports.addRoom = exports.addZone = exports.addSite = exports.addFloor = exports.addBuilding = exports.addAbstractElement = exports.createContext = exports.getChildType = void 0;
+exports.addContextToReference = exports.getOrCreateRefContext = exports.getOrCreateElemFromReferenceContext = exports.addToReferenceContext = exports._getReferenceContextName = exports.addBimElement = exports.addRoom = exports.addZone = exports.addSite = exports.addFloor = exports.addBuilding = exports.addAbstractElement = exports.createContext = exports.getChildType = void 0;
 /*
  * Copyright 2023 SpinalCom - www.spinalcom.com
  *
@@ -78,64 +78,50 @@ function createContext(contextName) {
     });
 }
 exports.createContext = createContext;
-function addAbstractElement(context, parent, elementName) {
+function addAbstractElement(context, parent, elementName, id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const parentType = parent.type.get();
+        const parentType = parent.info.type.get();
         const childType = getChildType(parentType);
         if (!childType) {
             throw Error(`${parentType} is not a valid type in geographic context`);
         }
-        const childRelation = constants_1.MAP_TYPE_RELATION.get(childType);
-        const childNode = new spinal_model_graph_1.SpinalNode(elementName, childType);
-        yield parent.addChildInContext(childNode, childRelation, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE, context);
-        addToReferenceContext(childNode);
-        return childNode;
+        return getOrCreateElemFromReferenceContext(childType, context, parent, elementName, id);
     });
 }
 exports.addAbstractElement = addAbstractElement;
-function addBuilding(context, parent, elementName) {
-    const child = new spinal_model_graph_1.SpinalNode(elementName, constants_1.BUILDING_TYPE);
-    addToReferenceContext(child);
-    return parent.addChildInContext(child, constants_1.BUILDING_RELATION, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE, context);
+function addBuilding(context, parent, elementName, id) {
+    return getOrCreateElemFromReferenceContext(constants_1.BUILDING_TYPE, context, parent, elementName, id);
 }
 exports.addBuilding = addBuilding;
-function addFloor(context, parent, elementName) {
-    const child = new spinal_model_graph_1.SpinalNode(elementName, constants_1.FLOOR_TYPE);
-    addToReferenceContext(child);
-    return parent.addChildInContext(child, constants_1.FLOOR_RELATION, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE, context);
+function addFloor(context, parent, elementName, id) {
+    return getOrCreateElemFromReferenceContext(constants_1.FLOOR_TYPE, context, parent, elementName, id);
 }
 exports.addFloor = addFloor;
-function addSite(context, parent, elementName) {
-    const child = new spinal_model_graph_1.SpinalNode(elementName, constants_1.SITE_TYPE);
-    addToReferenceContext(child);
-    return parent.addChildInContext(child, constants_1.SITE_RELATION, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE, context);
+function addSite(context, parent, elementName, id) {
+    return getOrCreateElemFromReferenceContext(constants_1.SITE_TYPE, context, parent, elementName, id);
 }
 exports.addSite = addSite;
-function addZone(context, parent, elementName) {
-    const child = new spinal_model_graph_1.SpinalNode(elementName, constants_1.ZONE_TYPE);
-    addToReferenceContext(child);
-    return parent.addChildInContext(child, constants_1.ZONE_RELATION, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE, context);
+function addZone(context, parent, elementName, id) {
+    return getOrCreateElemFromReferenceContext(constants_1.ZONE_TYPE, context, parent, elementName, id);
 }
 exports.addZone = addZone;
-function addRoom(context, parent, elementName) {
-    const child = new spinal_model_graph_1.SpinalNode(elementName, constants_1.ROOM_TYPE);
-    addToReferenceContext(child);
-    return parent.addChildInContext(child, constants_1.ROOM_RELATION, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE, context);
+function addRoom(context, parent, elementName, id) {
+    return getOrCreateElemFromReferenceContext(constants_1.ROOM_TYPE, context, parent, elementName, id);
 }
 exports.addRoom = addRoom;
 function addBimElement(context, parent, elements, model) {
     const elems = Array.isArray(elements) ? elements : [elements];
     let contextId = context.info.id.get();
     let parentId = parent.info.id.get();
-    addToReferenceContext(context);
-    addToReferenceContext(parent);
+    (0, graphservice_1.addNodeGraphService)(context);
+    (0, graphservice_1.addNodeGraphService)(parent);
     return Promise.all(elems.map((element) => {
         return window.spinal.BimObjectService.addBIMObject(contextId, parentId, element.dbId, element.name, model);
     }));
 }
 exports.addBimElement = addBimElement;
-function _getReferenceContextName(node) {
-    switch (node.info.type.get()) {
+function _getReferenceContextName(nodeType) {
+    switch (nodeType) {
         case constants_1.SITE_TYPE:
             return {
                 name: constants_1.SITE_REFERENCE_CONTEXT,
@@ -168,7 +154,7 @@ function _getReferenceContextName(node) {
 exports._getReferenceContextName = _getReferenceContextName;
 function addToReferenceContext(node) {
     return __awaiter(this, void 0, void 0, function* () {
-        const obj = _getReferenceContextName(node);
+        const obj = _getReferenceContextName(node.info.type.get());
         if (typeof obj !== 'undefined') {
             let context = yield getOrCreateRefContext(obj.name);
             yield context.addChild(node, obj.relation, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE);
@@ -176,6 +162,28 @@ function addToReferenceContext(node) {
     });
 }
 exports.addToReferenceContext = addToReferenceContext;
+function getOrCreateElemFromReferenceContext(nodeType, context, parent, elementName, id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const obj = _getReferenceContextName(nodeType);
+        if (typeof obj === 'undefined')
+            throw new Error(`error unknonw node type : ${nodeType}`);
+        const refContext = yield getOrCreateRefContext(obj.name);
+        let node;
+        if (typeof id !== 'undefined') {
+            const refNodes = yield refContext.getChildren(obj.relation);
+            node = refNodes.find((itm) => itm.info.id.get() === id);
+        }
+        if (!node) {
+            node = new spinal_model_graph_1.SpinalNode(elementName, nodeType);
+            if (typeof id !== 'undefined')
+                node.info.id.set(id);
+            yield refContext.addChild(node, obj.relation, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE);
+        }
+        yield parent.addChildInContext(node, obj.relation, spinal_model_graph_1.SPINAL_RELATION_PTR_LST_TYPE, context);
+        return node;
+    });
+}
+exports.getOrCreateElemFromReferenceContext = getOrCreateElemFromReferenceContext;
 function _getOrCreateRefContext(contextName) {
     return __asyncGenerator(this, arguments, function* _getOrCreateRefContext_1() {
         const graph = (0, graphservice_1.getGraph)();
